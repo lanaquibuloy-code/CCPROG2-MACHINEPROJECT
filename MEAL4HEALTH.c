@@ -1,11 +1,6 @@
-/*
-MEALS FOR HEALTH 
-MEMBERS: 
-LANA QUIBULOY
-KEIONNA JARAMILLO
-*/
 #include <stdio.h>
 #include <string.h>
+
 /*
 ===============================
 |         CONSTANTS            |
@@ -22,6 +17,45 @@ typedef char str20[21]; //NAME OF DISH & NAME OF ITEN USED
 typedef char str15[16]; // UNITS OF MEASUREMENT
 typedef char str70[71]; // INSTRUCSTIONS
 
+/*
+===============================
+|         STRUCTURES          |
+===============================
+*/
+typedef struct {
+	double Qty;
+	str15 UnitofMeas;
+	str20 FoodItem;
+} nIngredients;
+
+typedef struct {
+	str70 directions;
+}nInstructions;
+
+typedef struct {
+	str20 nDishName; 
+	str15 nClassification;
+	int servingSize;
+	
+	nIngredients ingredientsList[MAX_INGREDIENTS];
+	int ingreCount;
+	
+	nInstructions stepsList[MAX_STEPS];
+	int stepCount;
+}nRecipe;
+
+typedef struct {
+	str20 FoodItem;
+	double Qty;
+	str15 UnitofMeas;
+	int Calories;
+}nFoodInfo;
+
+/*
+===============================
+|         FUNCTIONS           |
+===============================
+*/
 void displayMainMenu(char *nChoice, int *ProgramRuns)
 {
 	
@@ -47,6 +81,13 @@ void displayMainMenu(char *nChoice, int *ProgramRuns)
 	}
 	
 }
+
+/*
+===============================
+|         MAIN PROG           |
+===============================
+*/
+
 
 int main(void)
 {
