@@ -13,7 +13,7 @@
 #define MAX_STEPS                15
 
 //CHARACTER LIMITATIONS
-typedef char str20[21]; //NAME OF DISH & NAME OF ITEN USED
+typedef char str20[21]; //NAME OF DISH & NAME OF ITEN USED 
 typedef char str15[16]; // UNITS OF MEASUREMENT
 typedef char str70[71]; // INSTRUCSTIONS
 
@@ -23,32 +23,32 @@ typedef char str70[71]; // INSTRUCSTIONS
 ===============================
 */
 typedef struct {
-    double Qty;
-    str15 UnitofMeas;
-    str20 FoodItem;
+	double Qty;
+	str15 UnitofMeas;
+	str20 FoodItem;
 } nIngredients;
 
 typedef struct {
-    str70 directions;
+	str70 directions;
 }nInstructions;
 
 typedef struct {
-    str20 nDishName;
-    str15 nClassification;
-    int servingSize;
-    
-    nIngredients ingredientsList[MAX_INGREDIENTS];
-    int ingreCount;
-    
-    nInstructions stepsList[MAX_STEPS];
-    int stepCount;
+	str20 nDishName; 
+	str15 nClassification;
+	int servingSize;
+	
+	nIngredients ingredientsList[MAX_INGREDIENTS];
+	int ingreCount;
+	
+	nInstructions stepsList[MAX_STEPS];
+	int stepCount;
 }nRecipe;
 
 typedef struct {
-    str20 FoodItem;
-    double Qty;
-    str15 UnitofMeas;
-    int Calories;
+	str20 FoodItem;
+	double Qty;
+	str15 UnitofMeas;
+	int Calories;
 }nFoodInfo;
 
 typedef struct {
@@ -61,7 +61,7 @@ typedef struct {
 |         FUNCTIONS           |
 ===============================
 */
-void displayMainMenu(char *nChoice, int *ProgramRuns)
+void displayMainMenu(char *nChoice)
 {	
 		printf("+===================================+\n");
 		printf("||%-33s||\n", "     Meals for Health");
@@ -80,7 +80,6 @@ void displayMainMenu(char *nChoice, int *ProgramRuns)
 
 void chooseUpdate(nAdminLogin *login, int *nSuccess)
 {
-    
     printf("\nEnter username: ");
     scanf("%20s", login->user);
     
@@ -156,7 +155,6 @@ void displayAccessRecipeBox(char *nChoice)
 |         MAIN PROG           |
 ===============================
 */
-
 int main(void)
 {
 	int ProgramRuns = 1;
@@ -164,7 +162,7 @@ int main(void)
 	
 	while(ProgramRuns) 
 	{
-		displayMainMenu(&nChoice, &ProgramRuns);
+		displayMainMenu(&nChoice);
 		
 		switch(nChoice)
 		{	
@@ -236,18 +234,15 @@ int main(void)
 									break;
 									
 								default:
-									printf("Invalid Option\n");
+									printf("Invalid Option.\n");
 									break;
 							}
 						}
 					}
-					else {
-						printf("Invalid Option.\n");
-					}
 				}
 				break;
 				
-			//CHOOSING ACCESS RECIPE
+				//CHOOSING ACCESS RECIPE
 			case 'A': 
 			case 'a':
 				{
@@ -302,12 +297,12 @@ int main(void)
 				printf("Invalid Option. Try again.\n\n");
 				ProgramRuns = 1; // goes back to menu
 				break;
-		
 		}
 		
-	}
 	
+	}
+				
+			
 	return 0;
 	
 }
-
