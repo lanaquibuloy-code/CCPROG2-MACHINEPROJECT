@@ -236,7 +236,7 @@ int main(void)
 									break;
 									
 								default:
-									printf("Invalid Username or password\n");
+									printf("Invalid Option\n");
 									break;
 							}
 						}
@@ -310,3 +310,4 @@ int main(void)
 	return 0;
 	
 }
+
