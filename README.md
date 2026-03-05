@@ -53,6 +53,7 @@ typedef struct {
 	str20 pass;
 } nAdminLogin;
 
+
 /*
 ===============================
 |   Preliminary outline of    |
