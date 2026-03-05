@@ -16,6 +16,45 @@ MAX_STEPS 15
 
 /*
 ===============================
+|         STRUCTURES          |
+===============================
+*/
+typedef struct {
+	double Qty;
+	str15 UnitofMeas;
+	str20 FoodItem;
+} nIngredients;
+
+typedef struct {
+	str70 directions;
+}nInstructions;
+
+typedef struct {
+	str20 nDishName; 
+	str15 nClassification;
+	int servingSize;
+	
+	nIngredients ingredientsList[MAX_INGREDIENTS];
+	int ingreCount;
+	
+	nInstructions stepsList[MAX_STEPS];
+	int stepCount;
+}nRecipe;
+
+typedef struct {
+	str20 FoodItem;
+	double Qty;
+	str15 UnitofMeas;
+	int Calories;
+}nFoodInfo;
+
+typedef struct {
+	str20 user;
+	str20 pass;
+} nAdminLogin;
+
+/*
+===============================
 |   Preliminary outline of    |
 |   functions to be created   |
 ===============================
