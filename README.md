@@ -75,7 +75,7 @@ void modifyRecipe(nRecipe recipeList[], int recipeCount);
 void delRecipe(nRecipe recipeList[], int *recipeCount);
 void listRecipe(nRecipe recipeList[], int recipeCount);
 void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount);
-void searchRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount);
+void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *nFound);
 void exportRecipe(nRecipe recipeList[], int recipeCount, char filename[]);
 void importRecipe(nRecipe recipeList[], int *recipeCount, char filename[]);
 
