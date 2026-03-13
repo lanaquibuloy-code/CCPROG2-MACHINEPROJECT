@@ -351,10 +351,14 @@ int main(void)
 									printf("WALA PA\n");
 									break;
 								case 'S':
+								case 'S':
 								case 's':
 									{
 										char dishName[21];
 										int nRep;
+										
+											nRecipe recipeList[MAX_RECIPES];
+											int recipeCount = 0;
 										
 										printf("\n-----SEARCH RECIPE-----\n");
 										printf("RECIPE NAME: ");
@@ -461,3 +465,4 @@ int main(void)
 	return 0;
 	
 }
+
