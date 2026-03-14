@@ -275,14 +275,29 @@ void addStep(nRecipe *recipe)
 
 void addRecipe(nRecipe recipeList[], int *recipeCount)
 {
+    int choice;
+    int isUnique;
+
     recipeList[*recipeCount].ingreCount = 0;
     recipeList[*recipeCount].stepCount = 0;
-    int choice;
+
     
     if(*recipeCount<MAX_RECIPES)
     {
-        printf("Enter Dish Name: ");
-        scanf(" %20[^\n]", recipeList[*recipeCount].nDishName);
+        do {
+            printf("Enter Dish Name: ");
+            scanf(" %20[^\n]", recipeList[*recipeCount].nDishName);
+
+            isUnique = 1; // assume the name is unique
+
+            for(int i = 0; i < *recipeCount; i++) {
+                if(strcmp(recipeList[i].nDishName, recipeList[*recipeCount].nDishName) == 0) {
+                    printf("Dish name already exists. Please enter a different name.\n");
+                    isUnique = 0; // found duplicate
+                }
+            }
+
+        } while(isUnique == 0); // repeat until the name is unique
         
         do
         {
@@ -312,7 +327,7 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
 
                 printf("\n[1] Yes");
                 printf("\n[2] No");
-                printf("Add another ingredient? ");
+                printf("\nAdd another ingredient? ");
 
                 
                 scanf("%d", &choice);
@@ -334,7 +349,7 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
 
                 printf("\n[1] Yes");
                 printf("\n[2] No");
-                printf("Add another step? ");
+                printf("\nAdd another step? ");
                 
                 scanf("%d", &choice);
             }
@@ -351,7 +366,6 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
     else
         printf("Cannot add more recipes.");
 }
-
 
 void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *nFound)
 {
@@ -606,3 +620,4 @@ int main(void)
     return 0;
     
 }
+
