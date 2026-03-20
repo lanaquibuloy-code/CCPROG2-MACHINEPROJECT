@@ -381,6 +381,78 @@ void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *n
    }
 }
 
+void listRecipe(nRecipe recipeList[], int recipeCount)
+{
+    int i, j, min;
+    str20 temporaryTitle[MAX_RECIPES];
+    str20 temp;
+    
+    for(i = 0; i < recipeCount; i++)
+    {
+        strcpy(temporaryTitle[i], recipeList[i].nDishName);
+    }
+    
+    for (i = 0; i < recipeCount - 1; i++)
+    {
+        min = i;
+
+        for (j = i + 1; j < recipeCount; j++)
+        {
+            if (strcmp(temporaryTitle[min], temporaryTitle[j]) > 0)
+            {
+                min = j;
+            }
+        }
+
+        if (i != min)
+        {
+            strcpy(temp, temporaryTitle[i]);
+            strcpy(temporaryTitle[i], temporaryTitle[min]);
+            strcpy(temporaryTitle[min], temp);
+        }
+    }
+    
+    printf("\nRecipe Titles:\n");
+    for(i = 0; i < recipeCount; i++) {
+        printf("%s\n", temporaryTitle[i]);
+    }
+    printf("\n");
+
+}
+
+void delRecipe(nRecipe recipeList[], int *recipeCount)
+{
+    int i;
+    int found=0;
+    str20 del;
+    
+    listRecipe(recipeList, *recipeCount);
+    
+    do {
+        found = 0;
+        
+        printf("Enter recipe you wish to delete: ");
+        scanf(" %20[^\n]", del);
+        
+        for(i = 0; i < *recipeCount && found == 0; i++)
+        {
+            if(strcmp(del, recipeList[i].nDishName) == 0)
+            {
+                recipeList[i] = recipeList[*recipeCount - 1];
+                (*recipeCount)--;
+                printf("Recipe successfully deleted!\n");
+                found = 1;
+            }
+        }
+        
+        if(found == 0)
+        {
+            printf("Recipe is not in the list\n");
+            printf("Check for possible spelling error.\n\n");
+        }
+        
+    } while(found == 0);
+}
 
 /*
 ===============================
@@ -498,10 +570,10 @@ int main(void)
                                         break;
                                     
                                 case '7':
-                                    printf("WALA PA\n");
+                                    delRecipe(recipeList,&recipeCount);
                                     break;
                                 case '8':
-                                    printf("WALA PA\n");
+                                    listRecipe(recipeList, recipeCount);
                                     break;
                                 case '9':
                                     printf("WALA PA\n");
