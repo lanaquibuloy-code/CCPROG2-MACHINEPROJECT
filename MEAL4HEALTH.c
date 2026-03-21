@@ -757,7 +757,8 @@ int main(void)
                                     listRecipe(recipeList, recipeCount);
                                     break;
                                 case '9':
-                                    printf("WALA PA\n");
+                                    sortRecipe(recipeList, recipeCount);
+                                    scanRecipe(recipeList, recipeCount, foodList, foodCount);
                                     break;
                                 case 'S':
                                 case 's':
