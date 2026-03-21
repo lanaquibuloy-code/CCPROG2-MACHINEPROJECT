@@ -415,43 +415,47 @@ void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *n
    }
 }
 
-void listRecipe(nRecipe recipeList[], int recipeCount)
+void sortRecipe(nRecipe recipeList[], int recipeCount)
 {
     int i, j, min;
-    str20 temporaryTitle[MAX_RECIPES];
-    str20 temp;
+    nRecipe temp;
     
-    for(i = 0; i < recipeCount; i++)
-    {
-        strcpy(temporaryTitle[i], recipeList[i].nDishName);
-    }
-    
-    for (i = 0; i < recipeCount - 1; i++)
+    for(i = 0; i < recipeCount - 1; i++)
     {
         min = i;
-
-        for (j = i + 1; j < recipeCount; j++)
+        
+        for(j = i + 1; j < recipeCount; j++)
         {
-            if (strcmp(temporaryTitle[min], temporaryTitle[j]) > 0)
+            if(strcmp(recipeList[min].nDishName, recipeList[j].nDishName) > 0)
             {
                 min = j;
             }
         }
-
-        if (i != min)
+        
+        if(i != min)
         {
-            strcpy(temp, temporaryTitle[i]);
-            strcpy(temporaryTitle[i], temporaryTitle[min]);
-            strcpy(temporaryTitle[min], temp);
+            temp = recipeList[i];
+            recipeList[i] = recipeList[min];
+            recipeList[min] = temp;
         }
     }
     
-    printf("\nRecipe Titles:\n");
-    for(i = 0; i < recipeCount; i++) {
-        printf("%s\n", temporaryTitle[i]);
-    }
-    printf("\n");
+}
 
+void listRecipe(nRecipe recipeList[], int recipeCount)
+{
+    int i;
+    
+    sortRecipe(recipeList, recipeCount);
+
+    printf("\nRecipe Titles:\n");
+    
+    for(i = 0; i < recipeCount; i++)
+    {
+        printf("%s\n", recipeList[i].nDishName);
+    }
+    
+    printf("\n");
 }
 
 void delRecipe(nRecipe recipeList[], int *recipeCount)
@@ -486,6 +490,99 @@ void delRecipe(nRecipe recipeList[], int *recipeCount)
         }
         
     } while(found == 0);
+}
+
+void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
+{
+    int i=0, j, k;
+    int totalCal, found;
+    double cal;
+    char choice = 'N';
+    
+    sortRecipe(recipeList, recipeCount);
+
+    while(i >= 0 && i < recipeCount && (choice == 'N' || choice == 'n' || choice == 'P' || choice == 'p'))
+        {
+            totalCal = 0;
+
+            for(j = 0; j < recipeList[i].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+
+                for(k = 0; k < foodCount && found == 0; k++)
+                {
+                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                              foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[i].ingredientsList[j].Qty /
+                               foodList[k].Qty) * foodList[k].Calories;
+
+                        found = 1;
+                    }
+                }
+
+                totalCal += cal;
+            }
+            printf("\n=======================================\n");
+            printf("%s %d servings %d calories\n",
+                   recipeList[i].nDishName,
+                   recipeList[i].servingSize,
+                   totalCal);
+
+            printf("\nIngredients:\n");
+            for(j = 0; j < recipeList[i].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+
+                for(k = 0; k < foodCount && found == 0; k++)
+                {
+                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                              foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[i].ingredientsList[j].Qty /
+                               foodList[k].Qty) * foodList[k].Calories;
+
+                        found = 1;
+                    }
+                }
+
+                printf("%.0lf %s %-15s %.0lf calories\n",
+                       recipeList[i].ingredientsList[j].Qty,
+                       recipeList[i].ingredientsList[j].UnitofMeas,
+                       recipeList[i].ingredientsList[j].FoodItem,
+                       cal);
+            }
+
+            printf("\nProcedure:\n");
+            for(j = 0; j < recipeList[i].stepCount; j++)
+            {
+                printf("%d. %s\n", j + 1, recipeList[i].stepsList[j].directions);
+            }
+
+            printf("\nPress N to view next recipe. ");
+            printf("\nPress P to view previous recipe.");
+            printf("\nPress X to exit.");
+            printf("\nEnter: ");
+            scanf(" %c", &choice);
+
+            if(choice == 'N' || choice == 'n')
+            {
+                if(i < recipeCount - 1)
+                    i++;
+                else
+                    printf("This is the last recipe!\n\n");
+            }
+            else if(choice == 'P' || choice == 'p')
+            {
+                if(i > 0)
+                    i--;
+                else
+                    printf("This is the first recipe!\n\n");
+            }
+            
+        }
 }
 
 void AgenList(nRecipe recipeList[], int recipeCount, int servings)
