@@ -224,6 +224,7 @@ void displayAccessRecipeBox(char *nChoice)
 }
 
 
+
 void addIngre(nRecipe *recipe)
 {
     int nIngre;
@@ -271,6 +272,39 @@ void addStep(nRecipe *recipe)
         printf("\nStop! The instructions are too long!\n");
     }
     
+}
+
+void deleteStep(nRecipe *recipe)
+{
+	int i;
+	int nStepNum;
+	
+	if(recipe->stepCount == 0)
+	{
+		printf("All steps are sufficient.\n");
+	}
+	else
+	{
+		printf("Enter step number to be deleted (1 to %d): ", recipe->stepCount);
+		scanf("%d", &nStepNum);
+		
+		
+		if (nStepNum >= 1 && nStepNum <= recipe->stepCount)
+		{
+			//shifts the list to the left
+			for(i = nStepNum - 1; i < recipe->stepCount - 1; i++)
+			{
+			    recipe->stepsList[i] = recipe->stepsList[i + 1];	
+			}
+			
+			recipe->stepCount--;
+			
+			printf("\nStep has been succesfully deleted!\n");
+		}
+		else {
+			printf("\nInvalid Step Number, Check number of steps again.\n");
+		}
+	}
 }
 
 void addRecipe(nRecipe recipeList[], int *recipeCount)
@@ -454,6 +488,56 @@ void delRecipe(nRecipe recipeList[], int *recipeCount)
     } while(found == 0);
 }
 
+void AgenList(nRecipe recipeList[], int recipeCount, int servings)
+{
+	int i;
+	int j;
+	int idx;
+	
+	
+	str20 dishName;
+	double newQty; // change quantity based on the serving size for the recipe
+	
+	//USER FIRST PUTS THE NAME OF THE RECIPE
+	printf("Enter Recipe Name: ");
+	scanf("%20[^\n]", dishName);
+	
+	//FIND RECIPE USING THE SEARCH RECIPE FUNCTION
+	void searchRecipe(recipeList,recipeCount,dishName, &idx);
+	
+	//checks if recipe exists
+	if(idx != -1)
+	{
+		printf("--- SHOPPING LIST---");
+		
+		for(j = 0; j < recipeList[idx].ingreCount; j++)
+		{
+			//adjust quantity based on how many servings the user wants 
+			newQty = (recipeList[idx].ingredientList[j].Qty * servings) / recipeList[idx].servingSize;
+			
+			//displays everything
+			printf("%.2lf %s of %s\n", 
+			newQty,
+			recipeList[idx].ingredientList[j].UnitofMeas,
+			recipeList[idx].ingredientList[j].FoodItem);
+		}
+		
+		printf("\nBased on %d servings.\n", servings);
+	}
+	else
+	{
+		printf("\nRecipe Not Found.\n");
+	}
+}
+
+void AscanRecIngre(nRecipe recipeList[], int recipeCount, char ingredient[])
+{
+	int i;
+	int j;
+	int foundRecipe; //checks if recipe is there
+	int found 
+}
+
 /*
 ===============================
 |         MAIN PROG           |
@@ -510,7 +594,7 @@ int main(void)
                                 case '5':
                                     addRecipe(recipeList, &recipeCount);
                                     break;
-                                case '6':
+                                case '6': // MODIFY RECIPE MENU
                                     {
                                         char NewChoice;
                                         int inModifyChoice = 1;
@@ -521,11 +605,11 @@ int main(void)
                                         
                                         while(inModifyChoice)
                                         {
-                                        displayModifyRecipe(&NewChoice);
+                                        displayModifyRecipe(&NewChoice); 
                                         
                                             switch(NewChoice)
                                             {
-                                                case '1':
+                                                case '1': // ADD INGREDIENTS
                                                     {
                                                         char nChoice = 'Y';
                                                         while (nChoice == 'Y' || nChoice == 'y')
@@ -539,10 +623,10 @@ int main(void)
                                                     }
                                                 break;
                                                     
-                                                case '2':
-                                                    printf("\nDelete Ingredient\n");
+                                                case '2': // DELETE INGREDIENT
+                                                       delRecipe(recipeList, &recipeCount);
                                                     break;
-                                                case '3':
+                                                case '3': // ADD STEP
                                                     {
                                                         char nChoice = 'Y';
                                                         while (nChoice == 'Y' || nChoice == 'y')
@@ -555,8 +639,8 @@ int main(void)
                                                         
                                                     }
                                                      break;
-                                                case '4':
-                                                    printf("\nDelete Step\n");
+                                                case '4': //DELETE STEP
+                                                    deleteStep(&tempRecipe);
                                                     break;
                                                 case 'R':
                                                 case 'r':
