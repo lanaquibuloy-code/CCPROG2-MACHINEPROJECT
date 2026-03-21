@@ -10,9 +10,15 @@ KEIONNA JARAMILLO
 |         CONSTANTS            |
 ===============================
 */
-MAX CHARACTERS FOR EACH DISH: 20 CHARACTERS
-MAX_INGREDIENTS 20
-MAX_STEPS 15
+/ LIMITS FOR RECIPES
+#define MAX_RECIPES              50
+#define MAX_INGREDIENTS          20
+#define MAX_STEPS                15
+
+//CHARACTER LIMITATIONS
+typedef char str20[21]; //NAME OF DISH & NAME OF ITEN USED 
+typedef char str15[16]; // UNITS OF MEASUREMENT
+typedef char str70[71]; // INSTRUCSTIONS
 
 /*
 ===============================
