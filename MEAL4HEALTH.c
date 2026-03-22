@@ -58,7 +58,7 @@ typedef struct {
 
 /*
 ===============================
-|         MENU SCREEN        |
+|         MENU SCREENs       |
 ===============================
 */
 void displayMainMenu(char *nChoice)
@@ -78,6 +78,7 @@ void displayMainMenu(char *nChoice)
     
 }
 
+//for log-in purposes
 void chooseUpdate(nAdminLogin *login, int *nSuccess)
 {
     printf("\nEnter username: ");
@@ -130,6 +131,351 @@ void displayUpdateRecipeBox(char *nChoice)
     
     scanf(" %c", nChoice);
 }
+
+void displayAccessRecipeBox(char *nChoice)
+{
+    printf("+===================================+\n");
+    printf("||%-33s||\n", "     ACCESS RECIPE BOX");
+    printf("+===================================+\n");
+    printf("||%-33s||\n", " 1. Import Recipes");
+    printf("||%-33s||\n", " 2. Scan Recipes");
+    printf("||%-33s||\n", " 3. Search Recipe by Title");
+    printf("||%-33s||\n", " 4. Generate Shopping List");
+    printf("||%-33s||\n", " 5. Scan Recipes by Ingredient");
+    printf("||%-33s||\n", " 6. Recommend Menu");
+    
+    printf("||%-33s||\n", " R. Exit Menu");
+    printf("+===================================+\n");
+    
+    printf("> ");
+    scanf(" %c", nChoice);
+}
+
+void displayModifyRecipe(char *nChoice)
+{
+    printf("+===================================+\n");
+    printf("||%-33s||\n", "     MODIFY RECIPE");
+    printf("+===================================+\n");
+    printf("||%-33s||\n", " 1. Add Ingredients");
+    printf("||%-33s||\n", " 2. Delete Ingredient");
+    printf("||%-33s||\n", " 3. Add Step");
+    printf("||%-33s||\n", " 4. Delete Step");
+    
+    printf("||%-33s||\n", " R. Return to Update Menu");
+    printf("+===================================+\n");
+    
+    printf("> ");
+    scanf(" %c", nChoice);
+}
+
+/*
+===============================
+|   USED IN BOTH FUNCTION     |
+===============================
+*/
+
+void displayIngre(nRecipe recipe)
+{
+	int i;
+	
+	printf("\n==================================================\n");
+	printf("| %-5s | %-10s | %-20s |\n", "Qty", "Unit", "Ingredient");
+	printf("\n==================================================\n");
+	
+	for (i = 0; i < recipe.ingreCount; i++)
+	{
+		printf("| %-5.2lf | %-10s | %-20s |\n",
+		recipe.ingredientsList[i].Qty,
+		recipe.ingredientsList[i].UnitofMeas,
+		recipe.ingredientsList[i].FoodItem);
+	}
+	
+	printf("\n==================================================\n");
+}
+
+void displaySteps(nRecipe recipe)
+{
+	int i;
+	
+	printf("\n==================================================\n");
+	printf("                     PROCEDURES\n");
+	printf("\n==================================================\n");
+	
+	for(i = 0; i< recipe.stepCount; i++)
+	{
+		printf("%d. %s\n", i + 1, recipe.stepsList[i].directions);
+	}
+	
+	printf("\n==================================================\n");
+}
+
+void sortRecipe(nRecipe recipeList[], int recipeCount)
+{
+    int i, j, min;
+    nRecipe temp;
+    
+    for(i = 0; i < recipeCount - 1; i++)
+    {
+        min = i;
+        
+        for(j = i + 1; j < recipeCount; j++)
+        {
+            if(strcmp(recipeList[min].nDishName, recipeList[j].nDishName) > 0)
+            {
+                min = j;
+            }
+        }
+        
+        if(i != min)
+        {
+            temp = recipeList[i];
+            recipeList[i] = recipeList[min];
+            recipeList[min] = temp;
+        }
+    }
+    
+}
+
+void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
+{
+    int i=0, j, k;
+    int totalCal, found;
+    double cal;
+    char choice = 'N';
+    
+    sortRecipe(recipeList, recipeCount);
+
+    while(i >= 0 && i < recipeCount && (choice == 'N' || choice == 'n' || choice == 'P' || choice == 'p'))
+        {
+            totalCal = 0;
+
+            for(j = 0; j < recipeList[i].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+
+                for(k = 0; k < foodCount && found == 0; k++)
+                {
+                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                              foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[i].ingredientsList[j].Qty /
+                               foodList[k].Qty) * foodList[k].Calories;
+
+                        found = 1;
+                    }
+                }
+
+                totalCal += cal;
+            }
+            
+            printf("\n=======================================\n");
+            printf("%s %d servings %d calories\n",
+                   recipeList[i].nDishName,
+                   recipeList[i].servingSize,
+                   totalCal);
+            printf("\n=======================================\n");
+            
+            /*
+            displayIngre(recipeList[i]);
+            displaySteps(recipeList[i]);
+            */
+
+            printf("\nIngredients:\n");
+            for(j = 0; j < recipeList[i].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+
+                for(k = 0; k < foodCount && found == 0; k++)
+                {
+                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                              foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[i].ingredientsList[j].Qty /
+                               foodList[k].Qty) * foodList[k].Calories;
+
+                        found = 1;
+                    }
+                }
+
+                printf("%.0lf %s %-15s %.0lf calories\n",
+                       recipeList[i].ingredientsList[j].Qty,
+                       recipeList[i].ingredientsList[j].UnitofMeas,
+                       recipeList[i].ingredientsList[j].FoodItem,
+                       cal);
+            }
+
+            printf("\nProcedure:\n");
+            for(j = 0; j < recipeList[i].stepCount; j++)
+            {
+                printf("%d. %s\n", j + 1, recipeList[i].stepsList[j].directions);
+            }
+
+            printf("\nPress N to view next recipe. ");
+            printf("\nPress P to view previous recipe.");
+            printf("\nPress X to exit.");
+            printf("\nEnter: ");
+            scanf(" %c", &choice);
+
+            if(choice == 'N' || choice == 'n')
+            {
+                if(i < recipeCount - 1)
+                    i++;
+                else
+                    printf("This is the last recipe!\n\n");
+            }
+            else if(choice == 'P' || choice == 'p')
+            {
+                if(i > 0)
+                    i--;
+                else
+                    printf("This is the first recipe!\n\n");
+            }
+            
+        }
+}
+
+void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *nFound)
+{
+    int i;
+    *nFound = -1;
+    
+    for(i = 0; i < recipeCount; i++)
+    {
+        if(strcmp(recipeList[i].nDishName, dishName) == 0)
+        {
+            *nFound = i;
+        }
+   }
+}
+
+
+/*
+===============================
+|         MODIFY SCREEN      |
+===============================
+*/
+
+void addIngre(nRecipe *recipe)
+{
+    int nIngre;
+    
+    if (recipe->ingreCount < MAX_INGREDIENTS) {
+        
+        nIngre = recipe->ingreCount;
+        
+        printf("\n-----ENTER QUANTITY-----\n");
+        scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
+        
+        printf("\n-----ENTER UNIT OF MEASUREMENT-----\n");
+        scanf(" %15[^\n]", recipe->ingredientsList[nIngre].UnitofMeas);
+        
+        printf("\n-----ENTER FOOD ITEM-----\n");
+        scanf(" %20[^\n]", recipe->ingredientsList[nIngre].FoodItem);
+        
+        recipe->ingreCount++;
+        
+        printf("\nIngredients Added succesfully!\n");
+    }
+    else {
+        printf("\nIngredients list has reached its max!\n");
+    }
+    
+}
+
+void addStep(nRecipe *recipe)
+{
+    int nStep;
+    
+    if(recipe->stepCount < MAX_STEPS)
+    {
+        nStep = recipe->stepCount;
+        
+        printf("\n-----ENTER INSTRUCTIONS-----\n");
+        scanf(" %70[^\n]", recipe->stepsList[nStep].directions);
+        
+        recipe->stepCount++;
+        
+        printf("\nSuccess! New Step added.\n");
+    }
+    else
+    {
+        printf("\nStop! The instructions are too long!\n");
+    }
+    
+}
+
+void deleteIngre(nRecipe *recipe)
+{
+	int i;
+	int nIngre;
+	
+	if(recipe->ingreCount == 0)
+	{
+		printf("All ingredients are good!\n");
+		
+	}
+	else
+	{
+		printf("Enter Ingredient to be deleted (1 to %d): ", recipe->ingreCount);
+		scanf("%d", &nIngre);
+		
+		if (nIngre >= 1 && nIngre <= recipe->ingreCount)
+		{
+			for (i = nIngre - 1; i < recipe->ingreCount - 1; i++)
+			{
+				recipe->ingredientsList[i] = recipe->ingredientsList[i + 1];
+			}
+			recipe->ingreCount--;
+			
+			printf("Succesfully removed Ingredient!\n");
+		}
+		else 
+			{
+				printf("Invalid Ingredient. Try Again.\n");
+			}
+	}
+}
+
+void deleteStep(nRecipe *recipe)
+{
+	int i;
+	int nStepNum;
+	
+	if(recipe->stepCount == 0)
+	{
+		printf("All steps are sufficient.\n");
+	}
+	else
+	{
+		printf("Enter step number to be deleted (1 to %d): ", recipe->stepCount);
+		scanf("%d", &nStepNum);
+		
+		
+		if (nStepNum >= 1 && nStepNum <= recipe->stepCount)
+		{
+			//shifts the list to the left
+			for(i = nStepNum - 1; i < recipe->stepCount - 1; i++)
+			{
+			    recipe->stepsList[i] = recipe->stepsList[i + 1];	
+			}
+			
+			recipe->stepCount--;
+			
+			printf("\nStep has been succesfully deleted!\n");
+		}
+		else {
+			printf("\nInvalid Step Number, Check number of steps again.\n");
+		}
+	}
+}
+
+/*
+===============================
+| UPDATE RECIPE BOX FUNCTIONS |
+===============================
+*/
 
 void addFoodInfo(nFoodInfo foodList[], int *foodCount)
 {
@@ -184,127 +530,6 @@ void viewFoodInfo(nFoodInfo foodList[], int foodCount)
             scanf(" %c", &choice);
         }
     }
-}
-
-
-void displayModifyRecipe(char *nChoice)
-{
-    printf("+===================================+\n");
-    printf("||%-33s||\n", "     MODIFY RECIPE");
-    printf("+===================================+\n");
-    printf("||%-33s||\n", " 1. Add Ingredients");
-    printf("||%-33s||\n", " 2. Delete Ingredient");
-    printf("||%-33s||\n", " 3. Add Step");
-    printf("||%-33s||\n", " 4. Delete Step");
-    
-    printf("||%-33s||\n", " R. Return to Update Menu");
-    printf("+===================================+\n");
-    
-    printf("> ");
-    scanf(" %c", nChoice);
-}
-
-void displayAccessRecipeBox(char *nChoice)
-{
-    printf("+===================================+\n");
-    printf("||%-33s||\n", "     ACCESS RECIPE BOX");
-    printf("+===================================+\n");
-    printf("||%-33s||\n", " 1. Import Recipes");
-    printf("||%-33s||\n", " 2. Scan Recipes");
-    printf("||%-33s||\n", " 3. Search Recipe by Title");
-    printf("||%-33s||\n", " 4. Generate Shopping List");
-    printf("||%-33s||\n", " 5. Scan Recipes by Ingredient");
-    printf("||%-33s||\n", " 6. Recommend Menu");
-    
-    printf("||%-33s||\n", " R. Exit Menu");
-    printf("+===================================+\n");
-    
-    printf("> ");
-    scanf(" %c", nChoice);
-}
-
-
-
-void addIngre(nRecipe *recipe)
-{
-    int nIngre;
-    
-    if (recipe->ingreCount < MAX_INGREDIENTS) {
-        
-        nIngre = recipe->ingreCount;
-        
-        printf("\n-----ENTER QUANTITY-----\n");
-        scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
-        
-        printf("\n-----ENTER UNIT OF MEASUREMENT-----\n");
-        scanf(" %15[^\n]", recipe->ingredientsList[nIngre].UnitofMeas);
-        
-        printf("\n-----ENTER FOOD ITEM-----\n");
-        scanf(" %20[^\n]", recipe->ingredientsList[nIngre].FoodItem);
-        
-        recipe->ingreCount++;
-        
-        printf("\nIngredients Added succesfully!\n");
-    }
-    else {
-        printf("\nIngredients list has reached its max!\n");
-    }
-    
-}
-
-void addStep(nRecipe *recipe)
-{
-    int nStep;
-    
-    if(recipe->stepCount < MAX_STEPS)
-    {
-        nStep = recipe->stepCount;
-        
-        printf("\n-----ENTER INSTRUCTIONS-----\n");
-        scanf(" %70[^\n]", recipe->stepsList[nStep].directions);
-        
-        recipe->stepCount++;
-        
-        printf("\nSuccess! New Step added.\n");
-    }
-    else
-    {
-        printf("\nStop! The instructions are too long!\n");
-    }
-    
-}
-
-void deleteStep(nRecipe *recipe)
-{
-	int i;
-	int nStepNum;
-	
-	if(recipe->stepCount == 0)
-	{
-		printf("All steps are sufficient.\n");
-	}
-	else
-	{
-		printf("Enter step number to be deleted (1 to %d): ", recipe->stepCount);
-		scanf("%d", &nStepNum);
-		
-		
-		if (nStepNum >= 1 && nStepNum <= recipe->stepCount)
-		{
-			//shifts the list to the left
-			for(i = nStepNum - 1; i < recipe->stepCount - 1; i++)
-			{
-			    recipe->stepsList[i] = recipe->stepsList[i + 1];	
-			}
-			
-			recipe->stepCount--;
-			
-			printf("\nStep has been succesfully deleted!\n");
-		}
-		else {
-			printf("\nInvalid Step Number, Check number of steps again.\n");
-		}
-	}
 }
 
 void addRecipe(nRecipe recipeList[], int *recipeCount)
@@ -401,47 +626,6 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
         printf("Cannot add more recipes.");
 }
 
-void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *nFound)
-{
-    int i;
-    *nFound = -1;
-    
-    for(i = 0; i < recipeCount; i++)
-    {
-        if(strcmp(recipeList[i].nDishName, dishName) == 0)
-        {
-            *nFound = i;
-        }
-   }
-}
-
-void sortRecipe(nRecipe recipeList[], int recipeCount)
-{
-    int i, j, min;
-    nRecipe temp;
-    
-    for(i = 0; i < recipeCount - 1; i++)
-    {
-        min = i;
-        
-        for(j = i + 1; j < recipeCount; j++)
-        {
-            if(strcmp(recipeList[min].nDishName, recipeList[j].nDishName) > 0)
-            {
-                min = j;
-            }
-        }
-        
-        if(i != min)
-        {
-            temp = recipeList[i];
-            recipeList[i] = recipeList[min];
-            recipeList[min] = temp;
-        }
-    }
-    
-}
-
 void listRecipe(nRecipe recipeList[], int recipeCount)
 {
     int i;
@@ -492,99 +676,11 @@ void delRecipe(nRecipe recipeList[], int *recipeCount)
     } while(found == 0);
 }
 
-void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
-{
-    int i=0, j, k;
-    int totalCal, found;
-    double cal;
-    char choice = 'N';
-    
-    sortRecipe(recipeList, recipeCount);
-
-    while(i >= 0 && i < recipeCount && (choice == 'N' || choice == 'n' || choice == 'P' || choice == 'p'))
-        {
-            totalCal = 0;
-
-            for(j = 0; j < recipeList[i].ingreCount; j++)
-            {
-                cal = 0;
-                found = 0;
-
-                for(k = 0; k < foodCount && found == 0; k++)
-                {
-                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
-                              foodList[k].FoodItem) == 0)
-                    {
-                        cal = (recipeList[i].ingredientsList[j].Qty /
-                               foodList[k].Qty) * foodList[k].Calories;
-
-                        found = 1;
-                    }
-                }
-
-                totalCal += cal;
-            }
-            printf("\n=======================================\n");
-            printf("%s %d servings %d calories\n",
-                   recipeList[i].nDishName,
-                   recipeList[i].servingSize,
-                   totalCal);
-
-            printf("\nIngredients:\n");
-            for(j = 0; j < recipeList[i].ingreCount; j++)
-            {
-                cal = 0;
-                found = 0;
-
-                for(k = 0; k < foodCount && found == 0; k++)
-                {
-                    if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
-                              foodList[k].FoodItem) == 0)
-                    {
-                        cal = (recipeList[i].ingredientsList[j].Qty /
-                               foodList[k].Qty) * foodList[k].Calories;
-
-                        found = 1;
-                    }
-                }
-
-                printf("%.0lf %s %-15s %.0lf calories\n",
-                       recipeList[i].ingredientsList[j].Qty,
-                       recipeList[i].ingredientsList[j].UnitofMeas,
-                       recipeList[i].ingredientsList[j].FoodItem,
-                       cal);
-            }
-
-            printf("\nProcedure:\n");
-            for(j = 0; j < recipeList[i].stepCount; j++)
-            {
-                printf("%d. %s\n", j + 1, recipeList[i].stepsList[j].directions);
-            }
-
-            printf("\nPress N to view next recipe. ");
-            printf("\nPress P to view previous recipe.");
-            printf("\nPress X to exit.");
-            printf("\nEnter: ");
-            scanf(" %c", &choice);
-
-            if(choice == 'N' || choice == 'n')
-            {
-                if(i < recipeCount - 1)
-                    i++;
-                else
-                    printf("This is the last recipe!\n\n");
-            }
-            else if(choice == 'P' || choice == 'p')
-            {
-                if(i > 0)
-                    i--;
-                else
-                    printf("This is the first recipe!\n\n");
-            }
-            
-        }
-}
-
+/*
+===============================
+|     ACCESS RECIPE BOX       |
+===============================
+*/
 void AgenList(nRecipe recipeList[], int recipeCount, int servings)
 {
 	int i;
@@ -600,7 +696,7 @@ void AgenList(nRecipe recipeList[], int recipeCount, int servings)
 	scanf("%20[^\n]", dishName);
 	
 	//FIND RECIPE USING THE SEARCH RECIPE FUNCTION
-	void searchRecipe(recipeList,recipeCount,dishName, &idx);
+	searchRecipe(recipeList,recipeCount,dishName, &idx);
 	
 	//checks if recipe exists
 	if(idx != -1)
@@ -610,13 +706,13 @@ void AgenList(nRecipe recipeList[], int recipeCount, int servings)
 		for(j = 0; j < recipeList[idx].ingreCount; j++)
 		{
 			//adjust quantity based on how many servings the user wants 
-			newQty = (recipeList[idx].ingredientList[j].Qty * servings) / recipeList[idx].servingSize;
+			newQty = (recipeList[idx].ingredientsList[j].Qty * servings) / recipeList[idx].servingSize;
 			
 			//displays everything
 			printf("%.2lf %s of %s\n", 
 			newQty,
-			recipeList[idx].ingredientList[j].UnitofMeas,
-			recipeList[idx].ingredientList[j].FoodItem);
+			recipeList[idx].ingredientsList[j].UnitofMeas,
+			recipeList[idx].ingredientsList[j].FoodItem);
 		}
 		
 		printf("\nBased on %d servings.\n", servings);
@@ -631,9 +727,39 @@ void AscanRecIngre(nRecipe recipeList[], int recipeCount, char ingredient[])
 {
 	int i;
 	int j;
-	int foundRecipe; //checks if recipe is there
-	int found 
+	int foundRecipe = 0; //checks if recipe is there
+	int foundIngre;
+	
+	for(i = 0; i < recipeCount; i++)
+	{	
+	     foundIngre = 0;
+	     
+		//runs through the ingredients in the recipe list
+		for (j = 0; j < recipeList[i].ingreCount && foundIngre == 0; j++)
+		{
+			if(strcmp(recipeList[i].ingredientsList[j].FoodItem, ingredient) == 0)
+			{
+				foundIngre = 1;
+			}
+			
+		}
+		
+		//ingredient is found in the recipe,
+		if(foundIngre == 1)
+		{
+			printf("%s\n", recipeList[i].nDishName);
+			foundRecipe = 1;
+		}
+	}
+	
+	//the recipe does not contain the ingredient
+	if(foundRecipe == 0)
+	{
+		printf("No Ingredient is found in the recipe/\n");
+	}
 }
+
+
 
 /*
 ===============================
@@ -676,98 +802,136 @@ int main(void)
                             
                             switch(NewChoice)
                             {
-                                case '1':
+                                case '1':// Add food calorie info
                                     addFoodInfo(foodList, &foodCount);
                                     break;
-                                case '2':
+                                    
+                                case '2': // View food calorie
                                     viewFoodInfo(foodList, foodCount);
                                     break;
-                                case '3':
+                                    
+                                case '3': //Save Calorie info
                                     printf("WALA PA\n");
                                     break;
-                                case '4':
+                                    
+                                case '4': //Load Calorie info
                                     printf("WALA PA\n");
                                     break;
-                                case '5':
+                                    
+                                case '5': //Add recipe
                                     addRecipe(recipeList, &recipeCount);
                                     break;
-                                case '6': // MODIFY RECIPE MENU
+                                 case '6': // MODIFY RECIPE MENU
                                     {
-                                        char NewChoice;
+                                        str20 dishName;
+                                        int nRep; //the recipe to be modified
+										char NewChoice;
                                         int inModifyChoice = 1;
                                         
-                                        nRecipe tempRecipe;
-                                        tempRecipe.ingreCount = 0;
-                                        tempRecipe.stepCount = 0;
+                                        printf("\n----- MODIFY RECIPE -----\n");
+										printf("RECIPE NAME: ");
+                                        scanf(" %20[^\n]", dishName);
                                         
-                                        while(inModifyChoice)
+                                        searchRecipe(recipeList, recipeCount, dishName, &nRep);
+                                        
+                                        if(nRep != -1)
                                         {
-                                        displayModifyRecipe(&NewChoice); 
-                                        
-                                            switch(NewChoice)
-                                            {
-                                                case '1': // ADD INGREDIENTS
+                                        	while(inModifyChoice)
+                                        	{
+                                        		displayModifyRecipe(&NewChoice); 
+                                        		
+                                        		switch(NewChoice)
+                                        		{
+                                        			case '1': // ADD INGREDIENTS
                                                     {
                                                         char nChoice = 'Y';
-                                                        while (nChoice == 'Y' || nChoice == 'y')
+                                                        while ((nChoice == 'Y' || nChoice == 'y') && recipeList[nRep].ingreCount < MAX_INGREDIENTS)
                                                         {
-                                                            addIngre(&tempRecipe);
+                                                            addIngre(&recipeList[nRep]);
                                                             
-                                                            printf("\nAdd another ingredient?\n");
-                                                            scanf(" %c", &nChoice);
+                                                            if(recipeList[nRep].ingreCount < MAX_INGREDIENTS)
+                                                            {
+                                                            	printf("\nAdd another ingredient?\n");
+																scanf(" %c", &nChoice);
+															}
+															else 
+															{
+																printf("\nIngredients list has reached it's max!. Stop!\n");
+																nChoice = 'N';
+															}
+                                                            
                                                         }
                                                         
                                                     }
                                                 break;
                                                     
-                                                case '2': // DELETE INGREDIENT
-                                                       delRecipe(recipeList, &recipeCount);
-                                                    break;
-                                                case '3': // ADD STEP
-                                                    {
-                                                        char nChoice = 'Y';
-                                                        while (nChoice == 'Y' || nChoice == 'y')
+                                                    case '2': //DELETE INGRE
+													   deleteIngre(&recipeList[nRep]);
+													   break;
+													
+													case '3': //ADD STEP
+													{
+														char nChoice = 'Y';
+                                                        while ((nChoice == 'Y' || nChoice == 'y') && recipeList[nRep].stepCount < MAX_STEPS)
                                                         {
-                                                            addStep(&tempRecipe);
+                                                            addStep(&recipeList[nRep]);
                                                             
-                                                            printf("\nAdd another step?\n");
-                                                            scanf(" %c", &nChoice);
+                                                            if(recipeList[nRep].stepCount < MAX_STEPS)
+                                                            {
+                                                            	printf("\nAdd another step?\n");
+                                                            	scanf(" %c", &nChoice);
+															}
+															else
+															{
+																printf("\nToo many steps added! It's reached it's max!\n");
+																nChoice = 'N';
+															}
                                                         }
-                                                        
-                                                    }
-                                                     break;
-                                                case '4': //DELETE STEP
-                                                    deleteStep(&tempRecipe);
-                                                    break;
-                                                case 'R':
-                                                case 'r':
-                                                    inModifyChoice = 0;
-                                                    break;
-                                                default:
-                                                    printf("\nINVALID\n");
-                                            }
-                                            }
-                                        }
-                                        break;
-                                    
-                                case '7':
+													}
+													   break;
+													
+													case '4': // DELETE STEP
+														deleteStep(&recipeList[nRep]);
+														break;
+													
+													case 'R':
+													case 'r':
+														inModifyChoice = 0;
+														break;
+														
+														default:
+															printf("\nINVALID! Try again.\n");
+															break;
+												}
+                                        		
+											}
+                                       }
+                                       else
+                                       {
+                                       	printf("\nRecipe is not here.\n");
+									   } 
+								}
+								break;
+								
+                                case '7': //DELETE RECIPE
                                     delRecipe(recipeList,&recipeCount);
                                     break;
-                                case '8':
+                                    
+                                case '8': //LIST RECIPE TITLES
                                     listRecipe(recipeList, recipeCount);
                                     break;
-                                case '9':
+                                    
+                                case '9': // SCAN RECIPES
                                     sortRecipe(recipeList, recipeCount);
                                     scanRecipe(recipeList, recipeCount, foodList, foodCount);
                                     break;
+                                    
+                                    //SEARCH RECIPE FUNCTION
                                 case 'S':
                                 case 's':
                                     {
-                                        char dishName[21];
+                                        str20 dishName;
                                         int nRep;
-                                        
-                                            nRecipe recipeList[MAX_RECIPES];
-                                            int recipeCount = 0;
                                         
                                         printf("\n-----SEARCH RECIPE-----\n");
                                         printf("RECIPE NAME: ");
@@ -777,19 +941,23 @@ int main(void)
                                         
                                         if(nRep != -1)
                                         {
-                                            printf("\nRecipe Found!");
+                                            printf("\nRecipe Found!\n");
                                         }
                                         else
                                         {
                                             printf("\nRecipe Is not here.\n");
                                         }
                                     }
-                                    
                                     break;
+                                    
+                                    //EXPORT RECIPE
                                 case 'E':
                                 case 'e':
+                                	
                                     printf("WALA PA\n");
                                     break;
+                                    
+                                    //IMPORT RECIPE
                                 case 'I':
                                 case 'i':
                                     printf("WALA PA\n");
@@ -823,26 +991,65 @@ int main(void)
                         
                         switch(NewChoice)
                         {
-                            case '1':
-                                printf("WALA PA\n");
-                                break;
-                            case '2':
-                                printf("WALA PA\n");
-                                break;
-                            case '3':
-                                printf("WALA PA\n");
-                                break;
-                            case '4':
-                                printf("WALA PA\n");
-                                break;
-                            case '5':
-                                printf("WALA PA\n");
-                                break;
-                            case '6':
+                            case '1': //IMPORT RECIPE
                                 printf("WALA PA\n");
                                 break;
                                 
-                            case 'R':
+                            case '2': //SCAN RECIPE
+                                sortRecipe(recipeList, recipeCount);
+                                scanRecipe(recipeList, recipeCount, foodList, foodCount);
+                                break;
+                                
+                            case '3': //SEARCH RECIPE BY TITLE
+                                 {
+                                        str20 dishName;
+                                        int nRep;
+                                        
+                                        printf("\n-----SEARCH RECIPE-----\n");
+                                        printf("RECIPE NAME: ");
+                                        scanf(" %20[^\n]", dishName);
+                                        
+                                        searchRecipe(recipeList, recipeCount, dishName, &nRep);
+                                        
+                                        if(nRep != -1)
+                                        {
+                                            printf("\nRecipe Found!\n");
+                                        }
+                                        else
+                                        {
+                                            printf("\nRecipe Is not here.\n");
+                                        }
+                                    }
+                                    break;
+                                
+                            case '4': //GENERATE SHOPPING LIST
+                            {
+                            	int servings;
+                            	
+                            	printf("Enter Serving Size: ");
+                            	scanf("%d", &servings);
+                            	
+                            	AgenList(recipeList, recipeCount, servings);
+							}
+                                break;
+                                
+                            case '5': //SCAN RECIPE BY INGREDIENT
+                            {
+                            	char ingredient[21];
+                            	
+                            	printf("Enter Ingredient Name: ");
+                            	scanf(" %20[^\n]", ingredient);
+                            	
+                            	AscanRecIngre(recipeList, recipeCount, ingredient);
+							}
+                                printf("WALA PA\n");
+                                break;
+                                
+                            case '6': //RECOMMEND MENU
+                                printf("WALA PA\n");
+                                break;
+                                
+                            case 'R': // RETURN BACK TO MAIN MENU
                             case 'r':
                                 InAccessChoice = 0;
                                 break;
@@ -874,4 +1081,3 @@ int main(void)
     return 0;
     
 }
-
