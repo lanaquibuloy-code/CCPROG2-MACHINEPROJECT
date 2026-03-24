@@ -268,18 +268,11 @@ void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int
 
                 totalCal += cal;
             }
-            
-            printf("\n=======================================\n");
+            printf("\n=====================================\n");
             printf("%s %d servings %d calories\n",
                    recipeList[i].nDishName,
                    recipeList[i].servingSize,
                    totalCal);
-            printf("\n=======================================\n");
-            
-            /*
-            displayIngre(recipeList[i]);
-            displaySteps(recipeList[i]);
-            */
 
             printf("\nIngredients:\n");
             for(j = 0; j < recipeList[i].ingreCount; j++)
@@ -323,14 +316,14 @@ void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int
                 if(i < recipeCount - 1)
                     i++;
                 else
-                    printf("This is the last recipe!\n\n");
+                    printf("\nTHIS IS THE LAST RECIPE!\n\n");
             }
             else if(choice == 'P' || choice == 'p')
             {
                 if(i > 0)
                     i--;
                 else
-                    printf("This is the first recipe!\n\n");
+                    printf("\nTHIS IS THE FIRST RECIPE!\n\n");
             }
             
         }
@@ -505,7 +498,7 @@ void viewFoodInfo(nFoodInfo foodList[], int foodCount)
     while(i < foodCount && (choice == 'N' || choice == 'n'))
     {
         printf("+----------------------------------------------------+\n");
-        printf("| Food Item        | Quantity | Unit       | Calories|\n");
+        printf("| Food Item       | Quantity | Unit       | Calories |\n");
         printf("+----------------------------------------------------+\n");
 
         ctr = 0;
