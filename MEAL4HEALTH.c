@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <string.h>
 
@@ -762,20 +763,20 @@ void readRecipe(FILE *fp, nRecipe *recipe)
 		fscanf(fp, "%[^\n]\n", recipe->stepsList[j].directions);
 	}
 }
-void exportRecipe(nRecipe recipeList, int recipeCount, char filename[])
+void exportRecipe(nRecipe recipeList[], int recipeCount, char filename[])
 {
-   FILE *fp
+   FILE *fp;
    int i;
    int j;
    
-   fp = fopen(filename, "w";)
+   fp = fopen(filename, "w");
    
    if(fp != NULL)
    {
    	for (i = 0; i < recipeCount; i++)
    	{
    		fprintf(fp, "%s\n", recipeList[i].nDishName); //DISH NAME
-		fprintf(fp, "%s %s\n", recipeList[i].servingSize, recipeList[i].nClassification) //SERVING SIZE + CLASSIFICATION
+		fprintf(fp, "%s %s\n", recipeList[i].servingSize, recipeList[i].nClassification); //SERVING SIZE + CLASSIFICATION
 		
 		fprintf(fp, "%d\n", recipeList[i].ingreCount);
 		
@@ -791,7 +792,7 @@ void exportRecipe(nRecipe recipeList, int recipeCount, char filename[])
 	   
 	   for(j = 0; j < recipeList[i].stepCount; j ++)
 	   {
-	   	fprintf(fp, "%s\n", recipeList[i].stepsList.directions);
+	   	fprintf(fp, "%s\n", recipeList[i].stepsList[j].directions);
 	   }
    }
    
@@ -804,47 +805,49 @@ void exportRecipe(nRecipe recipeList, int recipeCount, char filename[])
     	printf("Try again. An error occured opening the file.\n");
 	}
 }
-void importRecipe(nRecipe recipeList, int *recipeCount, char filename[])
+
+void importRecipe(nRecipe recipeList[], int *recipeCount, char filename[])
 {
-	FILE *fp;
-	int j;
-	
-	fp = fopen(filename,"r");
-	
-	if(fp != NULL)
-	{
-		while(fscanf(" %[^\n]\n", recipeList[*recipeCount].nDishName) == 1 )
-		{
-			fscanf(fp, "%s %s\n", recipeList[*recipeCount].servingSize
-			recipeList[*recipeCount].nClassification);
-			
-			fscanf(fp, "%d\n", &recipeList[*recipeCount].ingreCount);
-			
-			for(j = 0; j < recipeList[*recipeCount].ingreCount; j++)
-			{
-				fscanf(fp, "%lf %s %s\n",
-				&recipeList[*recipeCount].ingredientsList[j].Qty,
-				recipeList[*recipeCount].ingredientsList.UnitofMeas,
-				recipeList[*recipeCoint].ingredientsList.FoodItem);
-			}
-			
-			fscanf(fp, "%d\n", &recipeList[*recipeCount].stepCount);
-			
-			for(j = 0; j < recipeList[*recipeCount].stepCount; j++)
-			{
-				fscanf(fp, " %[^\n]\n", recipeList[*recipeList].stepsList[j].directions);
-				
-			}
-			
-			(*recipeCount)++;
-			
-		}
-		fclose(fp);
-	}
-	else {
-		printf("Try again! An error occured with opening the file.\n")
-	}
+    FILE *fp;
+    int j;
+
+    fp = fopen(filename, "r");
+
+    if(fp != NULL)
+    {
+        while(fscanf(fp, " %20[^\n]\n", recipeList[*recipeCount].nDishName) == 1)
+        {
+            fscanf(fp, "%d %15s\n",
+                   &recipeList[*recipeCount].servingSize,
+                   recipeList[*recipeCount].nClassification);
+
+            fscanf(fp, "%d\n", &recipeList[*recipeCount].ingreCount);
+
+            for(j = 0; j < recipeList[*recipeCount].ingreCount; j++)
+            {
+                fscanf(fp, "%lf %s %s\n",
+                       &recipeList[*recipeCount].ingredientsList[j].Qty,
+                       recipeList[*recipeCount].ingredientsList[j].UnitofMeas,
+                       recipeList[*recipeCount].ingredientsList[j].FoodItem);
+            }
+
+            fscanf(fp, "%d\n", &recipeList[*recipeCount].stepCount);
+
+            for(j = 0; j < recipeList[*recipeCount].stepCount; j++)
+            {
+                fscanf(fp, " %70[^\n]\n",
+                       recipeList[*recipeCount].stepsList[j].directions);
+            }
+
+            (*recipeCount)++;
+        }
+        fclose(fp);
+    }
+    else {
+        printf("Try again! An error occurred with opening the file.\n");
+    }
 }
+
 
 
 
@@ -1125,14 +1128,29 @@ int main(void)
                                     //EXPORT RECIPE
                                 case 'E':
                                 case 'e':
-                                	
-                                    printf("WALA PA\n");
+                                	{
+                                		char filename[50];
+                                		
+                                		printf("Enter filename to export: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		exportRecipe(recipeList, recipeCount, filename);
+									}
                                     break;
                                     
                                     //IMPORT RECIPE
                                 case 'I':
                                 case 'i':
-                                    printf("WALA PA\n");
+                                	{
+                                		char filename[50];
+                                		
+                                		printf("Enter filename to import: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		importRecipe(recipeList, &recipeCount, filename);
+									}
                                     break;
                                     
                                     //RETURN TO MENU
@@ -1164,7 +1182,15 @@ int main(void)
                         switch(NewChoice)
                         {
                             case '1': //IMPORT RECIPE
-                                printf("WALA PA\n");
+                            {
+                            	char filename[50];
+                                		
+                                		printf("Enter filename to import: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		importRecipe(recipeList, &recipeCount, filename);
+							}
                                 break;
                                 
                             case '2': //SCAN RECIPE
