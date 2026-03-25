@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <string.h>
 
@@ -170,9 +171,28 @@ void displayModifyRecipe(char *nChoice)
 
 /*
 ===============================
-|   USED IN BOTH FUNCTION     |
+|   USED IN BOTH FUNCTIONS    |
 ===============================
 */
+
+void readInput(char str[], int nSize)
+{
+	int i = 0; 
+	char ch;
+	
+	ch = getchar ();
+	
+	while (ch != '\n' && ch != EOF)
+	{
+		if ( i < nSize - 1)
+		{
+			str[i++] = ch;
+		}
+		ch = getchar();
+	}
+	
+	str[i] = '\0';
+}
 
 void displayIngre(nRecipe recipe)
 {
@@ -369,10 +389,11 @@ void addIngre(nRecipe *recipe)
         scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
         
         printf("\n-----ENTER UNIT OF MEASUREMENT-----\n");
-        scanf(" %15[^\n]", recipe->ingredientsList[nIngre].UnitofMeas);
+        getchar();
+        readInput(recipe->ingredientsList[nIngre].UnitofMeas, 16);
         
         printf("\n-----ENTER FOOD ITEM-----\n");
-        scanf(" %20[^\n]", recipe->ingredientsList[nIngre].FoodItem);
+        readInput(recipe->ingredientsList[nIngre].FoodItem,21);
         
         recipe->ingreCount++;
         
@@ -393,11 +414,13 @@ void addStep(nRecipe *recipe)
         nStep = recipe->stepCount;
         
         printf("\n-----ENTER INSTRUCTIONS-----\n");
-        scanf(" %70[^\n]", recipe->stepsList[nStep].directions);
+        getchar();
+        readInput(recipe->stepsList[nStep].directions,71);
         
         recipe->stepCount++;
         
         printf("\nSuccess! New Step added.\n");
+        displaySteps(*recipe);
     }
     else
     {
@@ -413,7 +436,7 @@ void deleteIngre(nRecipe *recipe)
 	
 	if(recipe->ingreCount == 0)
 	{
-		printf("All ingredients are good!\n");
+		printf("\nAll ingredients are good!\n");
 		
 	}
 	else
@@ -429,11 +452,11 @@ void deleteIngre(nRecipe *recipe)
 			}
 			recipe->ingreCount--;
 			
-			printf("Succesfully removed Ingredient!\n");
+			printf("\nSuccesfully removed Ingredient!\n");
 		}
 		else 
 			{
-				printf("Invalid Ingredient. Try Again.\n");
+				printf("\nInvalid Ingredient. Try Again.\n");
 			}
 	}
 }
@@ -445,7 +468,7 @@ void deleteStep(nRecipe *recipe)
 	
 	if(recipe->stepCount == 0)
 	{
-		printf("All steps are sufficient.\n");
+		printf("\nAll steps are sufficient.\n");
 	}
 	else
 	{
@@ -676,6 +699,158 @@ void delRecipe(nRecipe recipeList[], int *recipeCount)
     } while(found == 0);
 }
 
+void writeRecipe(FILE *fp, nRecipe recipe)
+{
+	int i;
+	
+	//RECIPE NAME
+	fprintf(fp, "%s\n", recipe.nDishName);
+	
+	//SERVING SIZE + CLASSIFICATION
+	fprintf(fp, "%s %s\n", recipe.servingSize, recipe.nClassification);
+	
+	//INGREDIENTS COUNT
+	fprintf(fp, "Ingredients %d\n", recipe.ingreCount);
+	
+	//LIST OF INGREDIENTS
+	for (i = 0; i < recipe.ingreCount; i++)
+	{
+		fprintf(fp, "%.2lf %s %s\n", 
+		recipe.ingredientsList[i].Qty,
+		recipe.ingredientsList[i].UnitofMeas,
+		recipe.ingredientsList[i].FoodItem);
+	}
+	
+	//STEPS COUNTER
+	fprintf(fp, "STEPS %d\n", recipe.stepCount);
+	
+	//STEPS LIST
+	for(i = 0; i < recipe.stepCount; i++)
+	{
+		fprintf(fp, "%s\n", recipe.stepsList[i].directions);
+	}
+}
+
+void readRecipe(FILE *fp, nRecipe *recipe) 
+{
+	int j;
+	
+	//RECIPE NAME
+	fscanf(fp, " %[^\n]\n", recipe->nDishName);
+	
+	//SERVING SIZE + CLASSIFICATION
+	fscanf(fp, "%s %s\n", recipe->servingSize, recipe->nClassification);
+	
+	//INGREDIENTS COUNT
+	fscanf(fp, "%d", &recipe->ingreCount);
+	
+		
+	//LIST OF INGREDIENTS
+	for(j = 0; j < recipe->ingreCount; j++)
+	{
+		fscanf(fp, "%lf %s %[^\n]\n", 
+		&recipe->ingredientsList[j].Qty,
+		recipe->ingredientsList[j].UnitofMeas,
+		recipe->ingredientsList[j].FoodItem);
+	}
+	
+	//STEPS COUNTER 
+	fscanf(fp, "STEPS %d\n", &recipe->stepCount);
+	
+	//LIST OF STEPS
+	for (j = 0; j < recipe->stepCount; j++)
+	{
+		fscanf(fp, "%[^\n]\n", recipe->stepsList[j].directions);
+	}
+}
+void exportRecipe(nRecipe recipeList[], int recipeCount, char filename[])
+{
+   FILE *fp;
+   int i;
+   int j;
+   
+   fp = fopen(filename, "w");
+   
+   if(fp != NULL)
+   {
+   	for (i = 0; i < recipeCount; i++)
+   	{
+   		fprintf(fp, "%s\n", recipeList[i].nDishName); //DISH NAME
+		fprintf(fp, "%s %s\n", recipeList[i].servingSize, recipeList[i].nClassification); //SERVING SIZE + CLASSIFICATION
+		
+		fprintf(fp, "%d\n", recipeList[i].ingreCount);
+		
+		for (j = 0; j < recipeList[j].ingreCount; j++)
+		{
+		    fprintf(fp, "%lf %s %s\n",
+		      recipeList[i].ingredientsList[j].Qty,
+		      recipeList[i].ingredientsList[j].UnitofMeas,
+		      recipeList[i].ingredientsList[j].FoodItem);
+	   }
+	   
+	   fprintf(fp, "%d\n", recipeList[i].stepCount); 
+	   
+	   for(j = 0; j < recipeList[i].stepCount; j ++)
+	   {
+	   	fprintf(fp, "%s\n", recipeList[i].stepsList[j].directions);
+	   }
+   }
+   
+   fclose(fp);	
+   
+    }
+    
+    else
+    {
+    	printf("Try again. An error occured opening the file.\n");
+	}
+}
+
+void importRecipe(nRecipe recipeList[], int *recipeCount, char filename[])
+{
+    FILE *fp;
+    int j;
+
+    fp = fopen(filename, "r");
+
+    if(fp != NULL)
+    {
+        while(fscanf(fp, " %20[^\n]\n", recipeList[*recipeCount].nDishName) == 1)
+        {
+            fscanf(fp, "%d %15s\n",
+                   &recipeList[*recipeCount].servingSize,
+                   recipeList[*recipeCount].nClassification);
+
+            fscanf(fp, "%d\n", &recipeList[*recipeCount].ingreCount);
+
+            for(j = 0; j < recipeList[*recipeCount].ingreCount; j++)
+            {
+                fscanf(fp, "%lf %s %s\n",
+                       &recipeList[*recipeCount].ingredientsList[j].Qty,
+                       recipeList[*recipeCount].ingredientsList[j].UnitofMeas,
+                       recipeList[*recipeCount].ingredientsList[j].FoodItem);
+            }
+
+            fscanf(fp, "%d\n", &recipeList[*recipeCount].stepCount);
+
+            for(j = 0; j < recipeList[*recipeCount].stepCount; j++)
+            {
+                fscanf(fp, " %70[^\n]\n",
+                       recipeList[*recipeCount].stepsList[j].directions);
+            }
+
+            (*recipeCount)++;
+        }
+        fclose(fp);
+    }
+    else {
+        printf("Try again! An error occurred with opening the file.\n");
+    }
+}
+
+
+
+
 /*
 ===============================
 |     ACCESS RECIPE BOX       |
@@ -851,7 +1026,7 @@ int main(void)
                                                             
                                                             if(recipeList[nRep].ingreCount < MAX_INGREDIENTS)
                                                             {
-                                                            	printf("\nAdd another ingredient?\n");
+                                                            	printf("\nAdd another ingredient? (Y or N)\n");
 																scanf(" %c", &nChoice);
 															}
 															else 
@@ -878,12 +1053,12 @@ int main(void)
                                                             
                                                             if(recipeList[nRep].stepCount < MAX_STEPS)
                                                             {
-                                                            	printf("\nAdd another step?\n");
+                                                            	printf("\nAdd another step? (Y or N)\n");
                                                             	scanf(" %c", &nChoice);
 															}
 															else
 															{
-																printf("\nToo many steps added! It's reached it's max!\n");
+																printf("\nToo many steps added! Limit has been reached!\n");
 																nChoice = 'N';
 															}
                                                         }
@@ -953,14 +1128,29 @@ int main(void)
                                     //EXPORT RECIPE
                                 case 'E':
                                 case 'e':
-                                	
-                                    printf("WALA PA\n");
+                                	{
+                                		char filename[50];
+                                		
+                                		printf("Enter filename to export: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		exportRecipe(recipeList, recipeCount, filename);
+									}
                                     break;
                                     
                                     //IMPORT RECIPE
                                 case 'I':
                                 case 'i':
-                                    printf("WALA PA\n");
+                                	{
+                                		char filename[50];
+                                		
+                                		printf("Enter filename to import: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		importRecipe(recipeList, &recipeCount, filename);
+									}
                                     break;
                                     
                                     //RETURN TO MENU
@@ -992,7 +1182,15 @@ int main(void)
                         switch(NewChoice)
                         {
                             case '1': //IMPORT RECIPE
-                                printf("WALA PA\n");
+                            {
+                            	char filename[50];
+                                		
+                                		printf("Enter filename to import: ");
+                                		getchar();
+                                		readInput(filename, 50);
+                                		
+                                		importRecipe(recipeList, &recipeCount, filename);
+							}
                                 break;
                                 
                             case '2': //SCAN RECIPE
