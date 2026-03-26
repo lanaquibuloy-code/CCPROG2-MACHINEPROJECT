@@ -697,7 +697,7 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
         {
             if(recipeList[*recipeCount].ingreCount < MAX_INGREDIENTS)
             {
-                printf("Enter Ingredient:\n");
+                printf("\n-----ENTER INGREDIENT-----\\n");
                 addIngre(&recipeList[*recipeCount]);
 
                 printf("\n[1] Yes");
