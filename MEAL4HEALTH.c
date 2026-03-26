@@ -386,14 +386,14 @@ void addIngre(nRecipe *recipe)
         
         nIngre = recipe->ingreCount;
         
-        printf("\nEnter Quantity: \n");
+        printf("\nEnter Quantity: ");
         scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
         
-        printf("\nEnter unit of measurement: \n");
+        printf("\nEnter unit of measurement: ");
         getchar();
         readInput(recipe->ingredientsList[nIngre].UnitofMeas, 16);
         
-        printf("\nEnter food item: \n");
+        printf("\nEnter food item: ");
         readInput(recipe->ingredientsList[nIngre].FoodItem,21);
         
         recipe->ingreCount++;
