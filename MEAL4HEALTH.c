@@ -386,7 +386,7 @@ void addIngre(nRecipe *recipe)
         
         nIngre = recipe->ingreCount;
         
-        printf("\Enter Quantity: \n");
+        printf("\nEnter Quantity: \n");
         scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
         
         printf("\nEnter unit of measurement: \n");
