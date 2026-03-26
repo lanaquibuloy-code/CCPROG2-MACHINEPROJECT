@@ -1089,7 +1089,7 @@ void AlistviewRecipee(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[
         
         if(foundRecipe == 0)
         {
-            printf("\nNo recipes available in this category.\n");
+            printf("\nNo recipes available.\n");
         }
 
     }
