@@ -144,6 +144,7 @@ void displayAccessRecipeBox(char *nChoice)
     printf("||%-33s||\n", " 4. Generate Shopping List");
     printf("||%-33s||\n", " 5. Scan Recipes by Ingredient");
     printf("||%-33s||\n", " 6. Recommend Menu");
+	printf("||%-33s||\n", " B. List/View by Category");
     
     printf("||%-33s||\n", " R. Exit Menu");
     printf("+===================================+\n");
