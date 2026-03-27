@@ -251,6 +251,14 @@ readInput(char str[],
     str[i] = '\0';
 }
 
+/*
+ displayIngre displays the ingredient list of the recipe.
+ 
+ @param recipe - recipe whose ingredients will be displayed
+ 
+ Pre-condition: recipe.ingreCount is between 0 and MAX_INGREDIENTS
+                recipe.ingredientsList contains valid data 
+*/
 void 
 displayIngre(nRecipe recipe)
 {
@@ -271,6 +279,14 @@ displayIngre(nRecipe recipe)
     printf("\n==================================================\n");
 }
 
+/*
+ displayIngre displays the instructions of the recipe.
+ 
+ @param recipe - recipe whose instructions will be displayed
+ 
+ Pre-condition: recipe.stepCount is between 0 and MAX_STEPS,
+                recipe.stepsList contains valid strings
+*/
 void 
 displaySteps(nRecipe recipe)
 {
