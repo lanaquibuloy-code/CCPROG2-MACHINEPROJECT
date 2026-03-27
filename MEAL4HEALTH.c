@@ -109,7 +109,7 @@ void chooseUpdate(nAdminLogin *login, int *nSuccess)
   
     else
     {
-        printf("\nInvalid username or password");
+        printf("\nInvalid username or password.");
         printf("\nReturning to main menu...\n\n");
         *nSuccess = 0;
     }
