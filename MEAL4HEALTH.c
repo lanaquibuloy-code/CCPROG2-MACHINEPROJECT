@@ -631,6 +631,14 @@ addFoodInfo(nFoodInfo foodList[],
     (*foodCount)++;
 }
 
+/*
+ viewFoodInfo displays 10 food items at a time
+ 
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - number of food items
+
+ Pre-condition: user inputs appropriate and same data type
+*/
 void 
 viewFoodInfo(nFoodInfo foodList[], 
              int foodCount)
@@ -673,7 +681,7 @@ viewFoodInfo(nFoodInfo foodList[],
  saveFoodInfo writes the information of the food items into a text file
  
  @param foodList - array of nFoodInfo structures that contains food item information
- @param foodCount - number of food items that are already present
+ @param foodCount - number of food items
 
  Pre-condition: file is already in the correct format
 */
