@@ -588,6 +588,14 @@ deleteStep(nRecipe *recipe)
 ===============================
 */
 
+/*
+ addFoodInfo asks user for the food item information
+ 
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - stores how many food items are already present
+
+ Pre-condition: user inputs appropriate and same data type
+*/
 void 
 addFoodInfo(nFoodInfo foodList[], 
             int *foodCount)
@@ -655,7 +663,9 @@ viewFoodInfo(nFoodInfo foodList[],
 
  Pre-condition: file is already in the correct format
 */
-void saveFoodInfo(nFoodInfo foodList[], int foodCount)
+void 
+saveFoodInfo(nFoodInfo foodList[], 
+             int foodCount)
 {
     int i;
     char filename[21];
