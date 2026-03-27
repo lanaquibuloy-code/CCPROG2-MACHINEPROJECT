@@ -416,7 +416,7 @@ void addStep(nRecipe *recipe)
     {
         nStep = recipe->stepCount;
         
-        printf("\n-----ENTER INSTRUCTIONS-----\n");
+        printf("\n\n-----ENTER INSTRUCTIONS-----\n");
         getchar();
         readInput(recipe->stepsList[nStep].directions,71);
         
@@ -699,7 +699,7 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
         {
             if(recipeList[*recipeCount].ingreCount < MAX_INGREDIENTS)
             {
-                printf("\n-----ENTER INGREDIENT-----\\n");
+                printf("\n-----ENTER INGREDIENT-----\n");
                 addIngre(&recipeList[*recipeCount]);
 
                 printf("\n[1] Yes");
@@ -1445,7 +1445,7 @@ int main(void)
                                                             
                                                             if(recipeList[nRep].ingreCount < MAX_INGREDIENTS)
                                                             {
-                                                            	printf("\nAdd another ingredient? (Y or N)\n");
+                                                            	printf("\nAdd another ingredient? (Y or N) ");
 																scanf(" %c", &nChoice);
 															}
 															else 
@@ -2093,11 +2093,11 @@ void addIngre(nRecipe *recipe)
         printf("\nEnter Quantity: ");
         scanf("%lf", &recipe->ingredientsList[nIngre].Qty);
         
-        printf("\nEnter unit of measurement: ");
+        printf("Enter unit of measurement: ");
         getchar();
         readInput(recipe->ingredientsList[nIngre].UnitofMeas, 16);
         
-        printf("\nEnter food item: ");
+        printf("Enter food item: ");
         readInput(recipe->ingredientsList[nIngre].FoodItem,21);
         
         recipe->ingreCount++;
@@ -2423,7 +2423,6 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
         {
             if(recipeList[*recipeCount].stepCount < MAX_STEPS)
             {
-                printf("List of Procedures:");
                 addStep(&recipeList[*recipeCount]);
 
                 printf("\n[1] Yes");
