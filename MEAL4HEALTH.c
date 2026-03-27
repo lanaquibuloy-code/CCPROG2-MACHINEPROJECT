@@ -74,8 +74,16 @@ typedef struct {
 ===============================
 |         MENU SCREENs       |
 ===============================
+
 */
-void displayMainMenu(char *nChoice)
+ displayMainMenu displays the main menu and accepts user input to navigate through main menu.
+ 
+ @param nChoice - char pointer where the user option will be stored
+ 
+ Pre-condition: nChoice is not null
+*/
+void 
+displayMainMenu(char *nChoice)
 {
         printf("+===================================+\n");
         printf("||%-33s||\n", "     Meals for Health");
@@ -92,8 +100,17 @@ void displayMainMenu(char *nChoice)
     
 }
 
-//for log-in purposes
-void chooseUpdate(nAdminLogin *login, int *nSuccess)
+/*
+ chooseUpdate validates if the username and password is correct
+ 
+ @param login - a pointer to the nAdminLogin struct storing the strings user and pass
+ @param nSuccess - an int pointer that sets to 1 if login succeeds, and 0 if it fails
+
+ Pre-condition: login and nSuccess are valid
+*/
+void
+chooseUpdate(nAdminLogin *login,
+             int *nSuccess)
 {
     printf("\nEnter username: ");
     scanf("%20s", login->user);
@@ -103,7 +120,7 @@ void chooseUpdate(nAdminLogin *login, int *nSuccess)
 
     if (strcmp(login->user, "admin") == 0 && strcmp(login->pass, "ad1234") == 0)
     {
-        printf("\nEntering update mode.. \n\n");
+        printf("\nEntering update mode...\n\n");
         *nSuccess = 1;
     }
   
@@ -115,7 +132,15 @@ void chooseUpdate(nAdminLogin *login, int *nSuccess)
     }
 }
 
-void displayUpdateRecipeBox(char *nChoice)
+/*
+ displayUpdateRecipeBox displays the update recipe box and accepts user input.
+ 
+ @param nChoice - char pointer where the user option will be stored
+ 
+ Pre-condition: nChoice is not null
+*/
+void 
+displayUpdateRecipeBox(char *nChoice)
 {
     printf("+===================================+\n");
     printf("||%-33s||\n", "     UPDATE RECIPE BOX");
@@ -146,7 +171,15 @@ void displayUpdateRecipeBox(char *nChoice)
     scanf(" %c", nChoice);
 }
 
-void displayAccessRecipeBox(char *nChoice)
+/*
+ displayAccessRecipeBox displays the access recipe box and accepts user input.
+ 
+ @param nChoice - char pointer where the user option will be stored
+ 
+ Pre-condition: nChoice is not null
+*/
+void 
+displayAccessRecipeBox(char *nChoice)
 {
     printf("+===================================+\n");
     printf("||%-33s||\n", "     ACCESS RECIPE BOX");
@@ -166,7 +199,15 @@ void displayAccessRecipeBox(char *nChoice)
     scanf(" %c", nChoice);
 }
 
-void displayModifyRecipe(char *nChoice)
+/*
+ displayModifyRecipe displays the modify recipe box and accepts user input.
+ 
+ @param nChoice - char pointer where the user option will be stored
+ 
+ Pre-condition: nChoice is not null
+*/
+void 
+displayModifyRecipe(char *nChoice)
 {
     printf("+===================================+\n");
     printf("||%-33s||\n", "     MODIFY RECIPE");
