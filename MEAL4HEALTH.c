@@ -78,7 +78,7 @@ typedef struct {
 */
  displayMainMenu displays the main menu and accepts user input to navigate through main menu.
  
- @param nChoice - char pointer where the user option will be stored
+ @param nChoice - address where the user option will be stored
  
  Pre-condition: nChoice is not null and not an integer
 */
@@ -135,7 +135,7 @@ chooseUpdate(nAdminLogin *login,
 /*
  displayUpdateRecipeBox displays the update recipe box and accepts user input.
  
- @param nChoice - char pointer where the user option will be stored
+ @param nChoice - address where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -174,7 +174,7 @@ displayUpdateRecipeBox(char *nChoice)
 /*
  displayAccessRecipeBox displays the access recipe box and accepts user input.
  
- @param nChoice - char pointer where the user option will be stored
+ @param nChoice - address where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -202,7 +202,7 @@ displayAccessRecipeBox(char *nChoice)
 /*
  displayModifyRecipe displays the modify recipe box and accepts user input.
  
- @param nChoice - char pointer where the user option will be stored
+ @param nChoice - address where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -461,6 +461,13 @@ searchRecipe(nRecipe recipeList[],
 ===============================
 */
 
+/*
+ addIngre asks user for the recipe ingredients information
+ 
+ @param recipe - address of the nRecipe structure where the ingredient will be stored
+ 
+ Pre-condition: user inputs appropriate and same data type
+*/
 void 
 addIngre(nRecipe *recipe)
 {
@@ -490,6 +497,13 @@ addIngre(nRecipe *recipe)
     
 }
 
+/*
+ addStep asks user for the recipe instructions
+ 
+ @param recipe - address of the nRecipe structure where the instructions will be stored
+ 
+ Pre-condition: user inputs appropriate and same data type
+*/
 void 
 addStep(nRecipe *recipe)
 {
@@ -592,7 +606,7 @@ deleteStep(nRecipe *recipe)
  addFoodInfo asks user for the food item information
  
  @param foodList - array of nFoodInfo structures that contains food item information
- @param foodCount - stores how many food items are already present
+ @param foodCount - address where the number of food items will be stored
 
  Pre-condition: user inputs appropriate and same data type
 */
@@ -716,7 +730,7 @@ saveFoodInfo(nFoodInfo foodList[],
  loadFoodInfo reads a text file inputted by the user and adds it in the foodList array
  
  @param foodList - array of nFoodInfo structures that contains food item information
- @param foodCount - stores how many food items are already present
+ @param foodCount - address where the number of food items will be stored
 
  Pre-condition: file is already in the correct format
 */
