@@ -80,7 +80,7 @@ typedef struct {
  
  @param nChoice - char pointer where the user option will be stored
  
- Pre-condition: nChoice is not null
+ Pre-condition: nChoice is not null and not an integer
 */
 void 
 displayMainMenu(char *nChoice)
