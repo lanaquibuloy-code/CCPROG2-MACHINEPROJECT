@@ -230,7 +230,9 @@ displayModifyRecipe(char *nChoice)
 ===============================
 */
 
-void readInput(char str[], int nSize)
+void 
+readInput(char str[], 
+          int nSize)
 {
     int i = 0;
     char ch;
@@ -249,7 +251,8 @@ void readInput(char str[], int nSize)
     str[i] = '\0';
 }
 
-void displayIngre(nRecipe recipe)
+void 
+displayIngre(nRecipe recipe)
 {
     int i;
     
@@ -268,7 +271,8 @@ void displayIngre(nRecipe recipe)
     printf("\n==================================================\n");
 }
 
-void displaySteps(nRecipe recipe)
+void 
+displaySteps(nRecipe recipe)
 {
     int i;
     
@@ -284,7 +288,9 @@ void displaySteps(nRecipe recipe)
     printf("\n==================================================\n");
 }
 
-void sortRecipe(nRecipe recipeList[], int recipeCount)
+void 
+sortRecipe(nRecipe recipeList[], 
+           int recipeCount)
 {
     int i, j, min;
     nRecipe temp;
@@ -307,11 +313,14 @@ void sortRecipe(nRecipe recipeList[], int recipeCount)
             recipeList[i] = recipeList[min];
             recipeList[min] = temp;
         }
-    }
-    
+    }  
 }
 
-void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
+void 
+scanRecipe(nRecipe recipeList[], 
+           int recipeCount, 
+           nFoodInfo foodList[], 
+           int foodCount)
 {
     int i=0, j, k;
     int totalCal, found;
@@ -411,7 +420,11 @@ void scanRecipe(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int
         }
 }
 
-void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *nFound)
+void 
+searchRecipe(nRecipe recipeList[], 
+             int recipeCount, 
+             char dishName[], 
+             int *nFound)
 {
     int i;
     *nFound = -1;
@@ -432,7 +445,8 @@ void searchRecipe(nRecipe recipeList[], int recipeCount, char dishName[], int *n
 ===============================
 */
 
-void addIngre(nRecipe *recipe)
+void 
+addIngre(nRecipe *recipe)
 {
     int nIngre;
     
@@ -460,7 +474,8 @@ void addIngre(nRecipe *recipe)
     
 }
 
-void addStep(nRecipe *recipe)
+void 
+addStep(nRecipe *recipe)
 {
     int nStep;
     
@@ -484,7 +499,8 @@ void addStep(nRecipe *recipe)
     
 }
 
-void deleteIngre(nRecipe *recipe)
+void 
+deleteIngre(nRecipe *recipe)
 {
     int i;
     int nIngre;
@@ -516,7 +532,8 @@ void deleteIngre(nRecipe *recipe)
     }
 }
 
-void deleteStep(nRecipe *recipe)
+void 
+deleteStep(nRecipe *recipe)
 {
     int i;
     int nStepNum;
@@ -555,7 +572,9 @@ void deleteStep(nRecipe *recipe)
 ===============================
 */
 
-void addFoodInfo(nFoodInfo foodList[], int *foodCount)
+void 
+addFoodInfo(nFoodInfo foodList[], 
+            int *foodCount)
 {
     printf("Enter Food Item: ");
     scanf(" %20[^\n]", foodList[*foodCount].FoodItem);
@@ -574,7 +593,9 @@ void addFoodInfo(nFoodInfo foodList[], int *foodCount)
     (*foodCount)++;
 }
 
-void viewFoodInfo(nFoodInfo foodList[], int foodCount)
+void 
+viewFoodInfo(nFoodInfo foodList[], 
+             int foodCount)
 {
     int i = 0;
     int ctr;
@@ -610,7 +631,9 @@ void viewFoodInfo(nFoodInfo foodList[], int foodCount)
     }
 }
 
-void saveFoodInfo(nFoodInfo foodList[], int foodCount)
+void 
+saveFoodInfo(nFoodInfo foodList[], 
+             int foodCount)
 {
     int i;
     char filename[21];
@@ -642,7 +665,9 @@ void saveFoodInfo(nFoodInfo foodList[], int foodCount)
     }
 }
 
-void loadFoodInfo(nFoodInfo foodList[], int *foodCount)
+void 
+loadFoodInfo(nFoodInfo foodList[], 
+             int *foodCount)
 {
     int i, found, replace;
     int index;
@@ -702,7 +727,9 @@ void loadFoodInfo(nFoodInfo foodList[], int *foodCount)
     }
 }
 
-void addRecipe(nRecipe recipeList[], int *recipeCount)
+void 
+addRecipe(nRecipe recipeList[], 
+          int *recipeCount)
 {
     int choice;
     int isUnique;
@@ -795,7 +822,9 @@ void addRecipe(nRecipe recipeList[], int *recipeCount)
         printf("Cannot add more recipes.");
 }
 
-void listRecipe(nRecipe recipeList[], int recipeCount)
+void 
+listRecipe(nRecipe recipeList[], 
+           int recipeCount)
 {
     int i;
     
@@ -811,7 +840,9 @@ void listRecipe(nRecipe recipeList[], int recipeCount)
     printf("\n");
 }
 
-void delRecipe(nRecipe recipeList[], int *recipeCount)
+void 
+delRecipe(nRecipe recipeList[], 
+          int *recipeCount)
 {
     int i;
     int found=0;
@@ -845,7 +876,9 @@ void delRecipe(nRecipe recipeList[], int *recipeCount)
     } while(found == 0);
 }
 
-void writeRecipe(FILE *fp, nRecipe recipe)
+void 
+writeRecipe(FILE *fp, 
+            nRecipe recipe)
 {
     int i;
     
@@ -877,7 +910,9 @@ void writeRecipe(FILE *fp, nRecipe recipe)
     }
 }
 
-void readRecipe(FILE *fp, nRecipe *recipe)
+void 
+readRecipe(FILE *fp, 
+           nRecipe *recipe)
 {
     int j;
     
@@ -910,7 +945,10 @@ void readRecipe(FILE *fp, nRecipe *recipe)
     }
 }
 
-void exportRecipe(nRecipe recipeList[], int recipeCount, char filename[])
+void 
+exportRecipe(nRecipe recipeList[], 
+             int recipeCount, 
+             char filename[])
 {
    FILE *fp;
    int i;
@@ -962,7 +1000,10 @@ void exportRecipe(nRecipe recipeList[], int recipeCount, char filename[])
     }
 }
 
-void importRecipe(nRecipe recipeList[], int *recipeCount, char filename[])
+void 
+importRecipe(nRecipe recipeList[], 
+             int *recipeCount, 
+             char filename[])
 {
     FILE *fp;
     int j;
@@ -1023,7 +1064,10 @@ void importRecipe(nRecipe recipeList[], int *recipeCount, char filename[])
 |     ACCESS RECIPE BOX       |
 ===============================
 */
-void AgenList(nRecipe recipeList[], int recipeCount, int servings)
+void 
+AgenList(nRecipe recipeList[], 
+         int recipeCount, 
+         int servings)
 {
     int j;
     int idx;
@@ -1064,7 +1108,10 @@ void AgenList(nRecipe recipeList[], int recipeCount, int servings)
     }
 }
 
-void AscanRecIngre(nRecipe recipeList[], int recipeCount, char ingredient[])
+void 
+AscanRecIngre(nRecipe recipeList[], 
+              int recipeCount, 
+              char ingredient[])
 {
     int i;
     int j;
@@ -1101,7 +1148,8 @@ void AscanRecIngre(nRecipe recipeList[], int recipeCount, char ingredient[])
 }
 
 
-int giveRandomInt(int recipeCount)
+int 
+giveRandomInt(int recipeCount)
 {
     int random;
     
@@ -1110,7 +1158,11 @@ int giveRandomInt(int recipeCount)
     return random;
 }
 
-void Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
+void 
+Arecommend(nRecipe recipeList[], 
+           int recipeCount, 
+           nFoodInfo foodList[], 
+           int foodCount)
 {
     int i, j, k;
     int totalCal, cal, found, calIntake;
@@ -1224,7 +1276,9 @@ void Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int
 ===============================
 */
 
-void AsortRecipe(nRecipe recipeList[], int recipeCount)
+void 
+AsortRecipe(nRecipe recipeList[], 
+            int recipeCount)
 {
     int i, j, max;
     nRecipe temp;
@@ -1250,7 +1304,10 @@ void AsortRecipe(nRecipe recipeList[], int recipeCount)
     }
 }
 
-void AlistviewRecipee(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
+void 
+AlistviewRecipee(nRecipe recipeList[], 
+                 int recipeCount, nFoodInfo foodList[], 
+                 int foodCount)
 {
     int i=0, j, k;
     int choice1;
@@ -1412,7 +1469,8 @@ void AlistviewRecipee(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[
 ===============================
 */
 
-int main(void)
+int 
+main(void)
 {
     int ProgramRuns = 1;
     char nChoice;
