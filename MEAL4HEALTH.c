@@ -230,6 +230,14 @@ displayModifyRecipe(char *nChoice)
 ===============================
 */
 
+/*
+ readInput reads a line of input from the user and stores it in a string
+ 
+ @param str - character array where the input string will be stored
+ @param nSize - maximum size of the string including the null terminator
+
+ Pre-condition: str has enough allocated space and nSize is valid
+ */
 void 
 readInput(char str[], 
           int nSize)
