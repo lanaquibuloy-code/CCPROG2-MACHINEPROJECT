@@ -681,12 +681,19 @@ saveFoodInfo(nFoodInfo foodList[],
     }
 }
 
+/*
+ loadFoodInfo reads a text file inputted by the user and adds it in the foodList array
+ 
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - stores how many food items are already present
+
+ Pre-condition: file is already in the correct format
+*/
 void 
 loadFoodInfo(nFoodInfo foodList[], 
              int *foodCount)
 {
     int i, found, replace;
-    int index;
     char filename[21];
    
     FILE*fp;
@@ -705,11 +712,10 @@ loadFoodInfo(nFoodInfo foodList[],
                       &foodList[*foodCount].Calories) == 4)
         {
             found = -1;
-            index = *foodCount;
 
             for (i = 0; i < *foodCount; i++)
             {
-                if (strcmp(foodList[i].FoodItem, foodList[index].FoodItem) == 0)
+                if (strcmp(foodList[i].FoodItem, foodList[*foodCount].FoodItem) == 0)
                 {
                     found = i;
                 }
@@ -717,7 +723,7 @@ loadFoodInfo(nFoodInfo foodList[],
 
             if (found != -1)
             {
-                printf("\nFood item \"%s\" already exists.\n", foodList[index].FoodItem);
+                printf("\nFood item \"%s\" already exists.\n", foodList[*foodCount].FoodItem);
                 printf("[1] Yes\n");
                 printf("[2] No\n");
                 printf("Replace existing data?: ");
@@ -725,7 +731,7 @@ loadFoodInfo(nFoodInfo foodList[],
 
                 if (replace == 1)
                 {
-                    foodList[found] = foodList[index];
+                    foodList[found] = foodList[*foodCount];
                 }
             }
             else
@@ -735,7 +741,7 @@ loadFoodInfo(nFoodInfo foodList[],
         }
         
         fclose(fp);
-        printf("Loading Food Information Success!\n");
+        printf("Success! Returning to main menu..\n");
     }
     else
     {
