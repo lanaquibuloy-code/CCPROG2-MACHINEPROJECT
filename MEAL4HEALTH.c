@@ -1,3 +1,14 @@
+/*
+ This is to certify that this project is our own work, based on our personal efforts in studying and applying the concepts learned.
+ We have constructed the functions and their respective algorithms and corresponding code by myself. The program was run, tested,
+ and page 5 debugged by my own efforts. We further certify that we have not copied in part or whole or otherwise plagiarized the
+ work of other students and/or persons, nor did we employ the use of AI in any part of the deliverable.
+
+                                                                                Keionna Marie C. Jaramillo, DLSU ID#12507237
+                                                                                Lana Mikaela P. Quibuloy, DLSU ID#12542199
+ */
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -99,7 +110,7 @@ void chooseUpdate(nAdminLogin *login, int *nSuccess)
     else
     {
         printf("\nInvalid username or password");
-        printf("\nReturning to main menu..\n\n");
+        printf("\nReturning to main menu...\n\n");
         *nSuccess = 0;
     }
 }
