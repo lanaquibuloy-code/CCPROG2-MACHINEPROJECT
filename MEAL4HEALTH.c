@@ -604,7 +604,7 @@ addFoodInfo(nFoodInfo foodList[],
     printf("Enter Calorie Count: ");
     scanf("%d", &foodList[*foodCount].Calories);
 
-    printf("Food item added successfully!\n\n");
+    printf("\nFood item added successfully!\n\n");
 
     (*foodCount)++;
 }
@@ -647,33 +647,54 @@ viewFoodInfo(nFoodInfo foodList[],
     }
 }
 
-void 
-saveFoodInfo(nFoodInfo foodList[], 
-             int foodCount)
+/*
+ saveFoodInfo writes the information of the food items into a text file
+ 
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - number of food items that are already present
+
+ Pre-condition: file is already in the correct format
+*/
+void saveFoodInfo(nFoodInfo foodList[], int foodCount)
 {
     int i;
     char filename[21];
     
     FILE*fp;
-
-    printf("Enter filename('.txt' included): ");
+            
+    printf("\nEnter filename('.txt' included): ");
     scanf("%20s", filename);
     
     fp=fopen(filename,"w");
-    
+
     if (fp!=NULL)
     {
-        for(i=0;i<foodCount;i++)
+        if(foodCount!=0)
         {
-            fprintf(fp, "%s \n%.0lf %s %d calories \n",
-                    foodList[i].FoodItem,
-                    foodList[i].Qty,
-                    foodList[i].UnitofMeas,
-                    foodList[i].Calories);
+            if(strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".txt") == 0)
+            {
+                for(i=0;i<foodCount;i++)
+                {
+                    fprintf(fp, "%s \n%.0lf %s %d calories \n",
+                            foodList[i].FoodItem,
+                            foodList[i].Qty,
+                            foodList[i].UnitofMeas,
+                            foodList[i].Calories);
+                }
+                
+                fclose(fp);
+                printf("\nSaving Food Information Success!\n\n");
+            }
+            else
+            {
+                printf("\nPlease include the .txt extension.\n\n");
+            }
         }
-        
-        fclose(fp);
-        printf("Saving Food Information Success!\n");
+        else
+        {
+            printf("\nNo food item available for saving.\n\n");
+
+        }
     }
     else
     {
