@@ -1049,6 +1049,7 @@ void AscanRecIngre(nRecipe recipeList[], int recipeCount, char ingredient[])
 	}
 }
 
+
 int giveRandomInt(int recipeCount)
 {
     int random;
@@ -1058,99 +1059,113 @@ int giveRandomInt(int recipeCount)
     return random;
 }
 
-void displayRecipe(nRecipe recipe, nFoodInfo foodList[], int foodCount) //displays one recipe
-{
-    int i, j, found;
-    double cal, totalCal = 0;
-    
-    // compute total calories
-    for (i = 0; i < recipe.ingreCount; i++)
-    {
-        cal = 0;
-        found = 0;
-        for (j = 0; j < foodCount && found == 0; j++)
-        {
-            if (strcmp(recipe.ingredientsList[i].FoodItem,
-                       foodList[j].FoodItem) == 0)
-            {
-                cal = (recipe.ingredientsList[i].Qty /
-                       foodList[j].Qty) * foodList[j].Calories;
-                found = 1;
-            }
-        }
-        totalCal += cal;
-    }
-
-    printf("\n=====================================\n");
-    printf("%s %d servings %.0lf calories\n",
-           recipe.nDishName,
-           recipe.servingSize,
-           totalCal);
-
-    // ingredients
-    printf("\nIngredients:\n");
-    for (i = 0; i < recipe.ingreCount; i++)
-    {
-        cal = 0;
-        found = 0;
-        for (j = 0; j < foodCount && found == 0; j++)
-        {
-            if (strcmp(recipe.ingredientsList[i].FoodItem,
-                       foodList[j].FoodItem) == 0)
-            {
-                cal = (recipe.ingredientsList[i].Qty /
-                       foodList[j].Qty) * foodList[j].Calories;
-                found = 1;
-            }
-        }
-
-        printf("%.0lf %s %-15s %.0lf calories\n",
-               recipe.ingredientsList[i].Qty,
-               recipe.ingredientsList[i].UnitofMeas,
-               recipe.ingredientsList[i].FoodItem,
-               cal);
-    }
-
-    // procedure
-    printf("\nProcedure:\n");
-    for (i = 0; i < recipe.stepCount; i++)
-    {
-        printf("%d. %s\n", i + 1, recipe.stepsList[i].directions);
-    }
-}
-
 void Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
 {
-    int i, idx, mainCandidates[recipeCount], mainCount = 0;
-    
+    int i, j, k;
+    int totalCal, cal, found, calIntake;
+    int validIdx[recipeCount];
+    int validCount = 0;
+    int num;
+
     if (recipeCount == 0)
     {
-        printf("\nNo recipes available.\n\n");
+        printf("\nNo recipes available.\n");
     }
     else
     {
-        for(i = 0; i < recipeCount; i++)
+        printf("Enter target calorie intake: ");
+        scanf("%d", &calIntake);
+
+        // find main course recipes that's < target calories
+        validCount = 0;
+        for (i = 0; i < recipeCount; i++)
         {
-            if(strcmp(recipeList[i].nClassification, "main") == 0)
+            totalCal = 0;
+            if (strcmp(recipeList[i].nClassification, "main") == 0)
             {
-                mainCandidates[mainCount] = i;
-                mainCount++;
+                for (j = 0; j < recipeList[i].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    for (k = 0; k < foodCount && found == 0; k++)
+                    {
+                        if (strcmp(recipeList[i].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                        {
+                            cal = (recipeList[i].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
+                        }
+                    }
+                    totalCal += cal;
+                }
+
+                if (totalCal <= calIntake)
+                {
+                    validIdx[validCount] = i;
+                    validCount++;
+                }
             }
         }
-        
-        if(mainCount > 0)
+
+        if (validCount == 0)
         {
-            idx = mainCandidates[giveRandomInt(mainCount)];
-            displayRecipe(recipeList[idx], foodList, foodCount);
+            printf("\nNo main courses available under target calories.\n");
         }
         else
         {
-            printf("\nNo main courses available.\n");
+            // choose one random main course
+            num = validIdx[giveRandomInt(validCount)];
+            totalCal = 0;
+
+            // calculate total cal
+            for (j = 0; j < recipeList[num].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+                for (k = 0; k < foodCount && found == 0; k++)
+                {
+                    if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                        found = 1;
+                    }
+                }
+                totalCal += cal;
+            }
+
+            // display recipe
+            printf("\n=====================================\n");
+            printf("%s %d servings %d calories\n", recipeList[num].nDishName, recipeList[num].servingSize, totalCal);
+
+            printf("\nIngredients:\n");
+            for (j = 0; j < recipeList[num].ingreCount; j++)
+            {
+                cal = 0;
+                found = 0;
+                for (k = 0; k < foodCount && found == 0; k++)
+                {
+                    if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                    {
+                        cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                        found = 1;
+                    }
+                }
+
+                printf("%.0lf %s %-15s %d calories\n",
+                       recipeList[num].ingredientsList[j].Qty,
+                       recipeList[num].ingredientsList[j].UnitofMeas,
+                       recipeList[num].ingredientsList[j].FoodItem,
+                       cal);
+            }
+
+            printf("\nProcedure:\n");
+            for (j = 0; j < recipeList[num].stepCount; j++)
+            {
+                printf("%d. %s\n", j + 1, recipeList[num].stepsList[j].directions);
+            }
         }
-        
-        printf("\nReturning to Access Mode Menu...\n");
     }
 }
+
 
 /*
 ===============================
