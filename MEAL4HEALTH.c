@@ -348,6 +348,16 @@ sortRecipe(nRecipe recipeList[],
     }  
 }
 
+/*
+ scanRecipe displays one recipe at a time and computes the number of calories based on the ingredients
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - number of recipes
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - number of food items
+
+ Pre-condition: recipeList and foodList contains valid recipe data
+*/
 void 
 scanRecipe(nRecipe recipeList[], 
            int recipeCount, 
@@ -452,6 +462,16 @@ scanRecipe(nRecipe recipeList[],
         }
 }
 
+/*
+ searchRecipe asks user which recipe to view
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - number of recipes
+ @param dishName - dish name to search for
+ @param nFound - int pointer where the number of found recipes will be stored
+
+ Pre-condition: at least one valid recipe
+*/
 void 
 searchRecipe(nRecipe recipeList[], 
              int recipeCount, 
@@ -545,6 +565,13 @@ addStep(nRecipe *recipe)
     
 }
 
+/*
+ deleteIngre deletes the ingredient the user wants to remove
+ 
+ @param recipe - pointer to the nRecipe structure from which the ingredient will be removed
+ 
+ Pre-condition: recipe contains at least one valid ingredient
+*/
 void 
 deleteIngre(nRecipe *recipe)
 {
@@ -578,6 +605,13 @@ deleteIngre(nRecipe *recipe)
     }
 }
 
+/*
+ deleteStep deletes the instruction the user wants to remove
+ 
+ @param recipe - pointer to the nRecipe structure from which the instruction will be removed
+ 
+ Pre-condition: recipe contains at least one valid instruction
+*/
 void 
 deleteStep(nRecipe *recipe)
 {
@@ -818,6 +852,14 @@ loadFoodInfo(nFoodInfo foodList[],
     }
 }
 
+/*
+ addRecipe asks user for a unique recipe
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - int pointer to the current number of recipes
+
+ Pre-condition: recipeList has enough space to store a recipe, and the inputs from the user are valid
+ */
 void 
 addRecipe(nRecipe recipeList[], 
           int *recipeCount)
@@ -913,6 +955,14 @@ addRecipe(nRecipe recipeList[],
         printf("Cannot add more recipes.");
 }
 
+/*
+ listRecipe lists all recipe titles in alphabetical order
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - number of recipes
+
+ Pre-condition: there is at least one valid recipe
+ */
 void 
 listRecipe(nRecipe recipeList[], 
            int recipeCount)
@@ -931,6 +981,14 @@ listRecipe(nRecipe recipeList[],
     printf("\n");
 }
 
+/*
+ delRecipe removes a recipe the user inputs to delete
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - int pointer to the current number of recipes and will be decremented
+
+ Pre-condition: there is at least one recipe in the recipeList to delete
+*/
 void 
 delRecipe(nRecipe recipeList[], 
           int *recipeCount)
@@ -967,6 +1025,14 @@ delRecipe(nRecipe recipeList[],
     } while(found == 0);
 }
 
+/*
+ writeRecipe writes a recipe’s information to a text file
+ 
+ @param fp - pointer to an open FILE where the recipe will be written
+ @param recipe - recipe whose information will be written in the file
+
+ Pre-condition: fp is non null and recipe contains valid data
+*/
 void 
 writeRecipe(FILE *fp, 
             nRecipe recipe)
@@ -1001,6 +1067,14 @@ writeRecipe(FILE *fp,
     }
 }
 
+/*
+ readRecipe loads the information from the text file to the nRecipe structure
+ 
+ @param fp - pointer to an open FILE containing the recipe data
+ @param recipe - pointer to an nRecipe structure where the data will be stored
+
+ Pre-condition: fp is non null
+*/
 void 
 readRecipe(FILE *fp, 
            nRecipe *recipe)
@@ -1016,7 +1090,6 @@ readRecipe(FILE *fp,
     //INGREDIENTS COUNT
     fscanf(fp, "%d", &recipe->ingreCount);
     
-        
     //LIST OF INGREDIENTS
     for(j = 0; j < recipe->ingreCount; j++)
     {
@@ -1036,6 +1109,15 @@ readRecipe(FILE *fp,
     }
 }
 
+/*
+ exportRecipe writes the list of recipes to a text file
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information to export
+ @param recipeCount - number of recipes
+ @param filename - name of the file to export
+ 
+ Pre-condition: there is at least one or more valid recipe
+*/
 void 
 exportRecipe(nRecipe recipeList[], 
              int recipeCount, 
@@ -1091,6 +1173,15 @@ exportRecipe(nRecipe recipeList[],
     }
 }
 
+/*
+ importRecipe loads the information from the text file to the nRecipe structure
+ 
+ @param recipeList - array of nRecipe structures where imported data will be stored
+ @param recipeCount - int pointer to the current number of recipes which will be updated
+ @param filename - name of the file the user wants to import
+ 
+ Pre-condition: there is at least one or more valid recipe and text file exists and follows the correct recipe formatting
+*/
 void 
 importRecipe(nRecipe recipeList[], 
              int *recipeCount, 
@@ -1146,8 +1237,6 @@ importRecipe(nRecipe recipeList[],
         printf("Try again! An error occurred with importing the file.\n\n");
     }
 }
-
-
 
 
 /*
