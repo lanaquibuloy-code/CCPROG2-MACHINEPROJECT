@@ -8,12 +8,10 @@
                                                                                 Lana Mikaela P. Quibuloy, DLSU ID#12542199
  */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
 
 /*
 ===============================
@@ -1244,6 +1242,16 @@ importRecipe(nRecipe recipeList[],
 |     ACCESS RECIPE BOX       |
 ===============================
 */
+
+/*
+ AgenList asks which recipe to generate a shopping list and the number of servings
+ 
+ @param recipeList - array of nRecipe structures containing the available recipes
+ @param recipeCount - number of recipes
+ @param servings - number of servings the user will cook for
+ 
+ Pre-condition: there is at least one or more valid recipe
+*/
 void 
 AgenList(nRecipe recipeList[], 
          int recipeCount, 
@@ -1288,6 +1296,15 @@ AgenList(nRecipe recipeList[],
     }
 }
 
+/*
+ AscanRecIngre asks user for an ingredient and shows the recipe information of all recipes its part of
+ 
+ @param recipeList - array of nRecipe structures containing the  recipes
+ @param recipeCount - number of recipes
+ @param ingredient - string of the ingredient name to search
+ 
+ Pre-condition: at least one valid recipe and ingredient
+*/
 void 
 AscanRecIngre(nRecipe recipeList[], 
               int recipeCount, 
@@ -1456,6 +1473,14 @@ Arecommend(nRecipe recipeList[],
 ===============================
 */
 
+/*
+ AsortRecipe sorts recipe in descending alphabetical order based on its classification
+ 
+ @param recipeList - array of nRecipe structures containing the recipes
+ @param recipeCount - number of recipes
+ 
+ Pre-condition: there is at least one or more valid recipe
+*/
 void 
 AsortRecipe(nRecipe recipeList[], 
             int recipeCount)
@@ -1484,6 +1509,16 @@ AsortRecipe(nRecipe recipeList[],
     }
 }
 
+/*
+ AlistviewRecipe asks user whether to list or view recipes based on its classification
+ 
+ @param recipeList - array of nRecipe structures containing the recipes information
+ @param recipeCount - number of recipes
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - number of food items
+
+ Pre-condition: there is at least one or more valid recipe and food information
+*/
 void 
 AlistviewRecipee(nRecipe recipeList[], 
                  int recipeCount, nFoodInfo foodList[], 
