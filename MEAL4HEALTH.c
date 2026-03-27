@@ -304,6 +304,14 @@ displaySteps(nRecipe recipe)
     printf("\n==================================================\n");
 }
 
+/*
+ sortRecipe sorts the recipes alphabetically by its dish name
+ 
+ @param recipeList - array of nRecipe structures that contains recipe information
+ @param recipeCount - number of recipes
+
+ Pre-condition: recipeList contains valid recipe data
+*/
 void 
 sortRecipe(nRecipe recipeList[], 
            int recipeCount)
@@ -637,7 +645,7 @@ addFoodInfo(nFoodInfo foodList[],
  @param foodList - array of nFoodInfo structures that contains food item information
  @param foodCount - number of food items
 
- Pre-condition: user inputs appropriate and same data type
+ Pre-condition: foodList contains valid data and user inputs appropriate and same data type
 */
 void 
 viewFoodInfo(nFoodInfo foodList[], 
