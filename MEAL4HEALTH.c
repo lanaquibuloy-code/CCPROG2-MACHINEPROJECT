@@ -988,7 +988,12 @@ listRecipe(nRecipe recipeList[],
     {
         printf("%s\n", recipeList[i].nDishName);
     }
-    
+
+	if(recipeCount==0)
+    {
+        printf("No recipes available.\n");
+    }
+	
     printf("\n");
 }
 
