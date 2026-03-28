@@ -1,3 +1,4 @@
+
 /*
  This is to certify that this project is our own work, based on our personal efforts in studying and applying the concepts learned.
  We have constructed the functions and their respective algorithms and corresponding code by myself. The program was run, tested,
@@ -8,10 +9,12 @@
                                                                                 Lana Mikaela P. Quibuloy, DLSU ID#12542199
  */
 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+
 
 /*
 ===============================
@@ -79,11 +82,12 @@ typedef struct {
 ===============================
 |         MENU SCREENs       |
 ===============================
+*/
 
 /*
  displayMainMenu displays the main menu and accepts user input to navigate through main menu.
  
- @param nChoice - address where the user option will be stored
+ @param nChoice - char pointer where the user option will be stored
  
  Pre-condition: nChoice is not null and not an integer
 */
@@ -140,7 +144,7 @@ chooseUpdate(nAdminLogin *login,
 /*
  displayUpdateRecipeBox displays the update recipe box and accepts user input.
  
- @param nChoice - address where the user option will be stored
+ @param nChoice - char pointer where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -179,7 +183,7 @@ displayUpdateRecipeBox(char *nChoice)
 /*
  displayAccessRecipeBox displays the access recipe box and accepts user input.
  
- @param nChoice - address where the user option will be stored
+ @param nChoice - char pointer where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -213,7 +217,7 @@ displayAccessRecipeBox(char *nChoice)
 /*
  displayModifyRecipe displays the modify recipe box and accepts user input.
  
- @param nChoice - address where the user option will be stored
+ @param nChoice - char pointer where the user option will be stored
  
  Pre-condition: nChoice is not null
 */
@@ -249,6 +253,7 @@ displayModifyRecipe(char *nChoice)
 
  Pre-condition: str has enough allocated space and nSize is valid
  */
+
 void 
 readInput(char str[], 
           int nSize)
@@ -331,6 +336,7 @@ displaySteps(nRecipe recipe)
 
  Pre-condition: recipeList contains valid recipe data
 */
+
 void 
 sortRecipe(nRecipe recipeList[], 
            int recipeCount)
@@ -369,6 +375,7 @@ sortRecipe(nRecipe recipeList[],
 
  Pre-condition: recipeList and foodList contains valid recipe data
 */
+
 void 
 scanRecipe(nRecipe recipeList[], 
            int recipeCount, 
@@ -483,6 +490,7 @@ scanRecipe(nRecipe recipeList[],
 
  Pre-condition: at least one valid recipe
 */
+
 void 
 searchRecipe(nRecipe recipeList[], 
              int recipeCount, 
@@ -515,6 +523,7 @@ searchRecipe(nRecipe recipeList[],
  
  Pre-condition: user inputs appropriate and same data type
 */
+
 void 
 addIngre(nRecipe *recipe)
 {
@@ -551,6 +560,7 @@ addIngre(nRecipe *recipe)
  
  Pre-condition: user inputs appropriate and same data type
 */
+
 void 
 addStep(nRecipe *recipe)
 {
@@ -583,6 +593,7 @@ addStep(nRecipe *recipe)
  
  Pre-condition: recipe contains at least one valid ingredient
 */
+
 void 
 deleteIngre(nRecipe *recipe)
 {
@@ -623,6 +634,7 @@ deleteIngre(nRecipe *recipe)
  
  Pre-condition: recipe contains at least one valid instruction
 */
+
 void 
 deleteStep(nRecipe *recipe)
 {
@@ -687,7 +699,7 @@ addFoodInfo(nFoodInfo foodList[],
     printf("Enter Calorie Count: ");
     scanf("%d", &foodList[*foodCount].Calories);
 
-    printf("\nFood item added successfully!\n\n");
+    printf("Food item added successfully!\n\n");
 
     (*foodCount)++;
 }
@@ -700,6 +712,7 @@ addFoodInfo(nFoodInfo foodList[],
 
  Pre-condition: foodList contains valid data and user inputs appropriate and same data type
 */
+
 void 
 viewFoodInfo(nFoodInfo foodList[], 
              int foodCount)
@@ -746,6 +759,7 @@ viewFoodInfo(nFoodInfo foodList[],
 
  Pre-condition: file is already in the correct format
 */
+
 void 
 saveFoodInfo(nFoodInfo foodList[], 
              int foodCount)
@@ -754,40 +768,25 @@ saveFoodInfo(nFoodInfo foodList[],
     char filename[21];
     
     FILE*fp;
-            
-    printf("\nEnter filename('.txt' included): ");
+
+    printf("Enter filename('.txt' included): ");
     scanf("%20s", filename);
     
     fp=fopen(filename,"w");
-
+    
     if (fp!=NULL)
     {
-        if(foodCount!=0)
+        for(i=0;i<foodCount;i++)
         {
-            if(strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".txt") == 0)
-            {
-                for(i=0;i<foodCount;i++)
-                {
-                    fprintf(fp, "%s \n%.0lf %s %d calories \n",
-                            foodList[i].FoodItem,
-                            foodList[i].Qty,
-                            foodList[i].UnitofMeas,
-                            foodList[i].Calories);
-                }
-                
-                fclose(fp);
-                printf("\nSaving Food Information Success!\n\n");
-            }
-            else
-            {
-                printf("\nPlease include the .txt extension.\n\n");
-            }
+            fprintf(fp, "%s \n%.0lf %s %d calories \n",
+                    foodList[i].FoodItem,
+                    foodList[i].Qty,
+                    foodList[i].UnitofMeas,
+                    foodList[i].Calories);
         }
-        else
-        {
-            printf("\nNo food item available for saving.\n\n");
-
-        }
+        
+        fclose(fp);
+        printf("Saving Food Information Success!\n");
     }
     else
     {
@@ -799,7 +798,7 @@ saveFoodInfo(nFoodInfo foodList[],
  loadFoodInfo reads a text file inputted by the user and adds it in the foodList array
  
  @param foodList - array of nFoodInfo structures that contains food item information
- @param foodCount - address where the number of food items will be stored
+ @param foodCount - stores how many food items are already present
 
  Pre-condition: file is already in the correct format
 */
@@ -871,6 +870,7 @@ loadFoodInfo(nFoodInfo foodList[],
 
  Pre-condition: recipeList has enough space to store a recipe, and the inputs from the user are valid
  */
+
 void 
 addRecipe(nRecipe recipeList[], 
           int *recipeCount)
@@ -966,14 +966,6 @@ addRecipe(nRecipe recipeList[],
         printf("Cannot add more recipes.");
 }
 
-/*
- listRecipe lists all recipe titles in alphabetical order
- 
- @param recipeList - array of nRecipe structures that contains recipe information
- @param recipeCount - number of recipes
-
- Pre-condition: there is at least one valid recipe
- */
 void 
 listRecipe(nRecipe recipeList[], 
            int recipeCount)
@@ -988,23 +980,10 @@ listRecipe(nRecipe recipeList[],
     {
         printf("%s\n", recipeList[i].nDishName);
     }
-
-	if(recipeCount==0)
-    {
-        printf("No recipes available.\n");
-    }
-	
+    
     printf("\n");
 }
 
-/*
- delRecipe removes a recipe the user inputs to delete
- 
- @param recipeList - array of nRecipe structures that contains recipe information
- @param recipeCount - int pointer to the current number of recipes and will be decremented
-
- Pre-condition: there is at least one recipe in the recipeList to delete
-*/
 void 
 delRecipe(nRecipe recipeList[], 
           int *recipeCount)
@@ -1041,14 +1020,6 @@ delRecipe(nRecipe recipeList[],
     } while(found == 0);
 }
 
-/*
- writeRecipe writes a recipe’s information to a text file
- 
- @param fp - pointer to an open FILE where the recipe will be written
- @param recipe - recipe whose information will be written in the file
-
- Pre-condition: fp is non null and recipe contains valid data
-*/
 void 
 writeRecipe(FILE *fp, 
             nRecipe recipe)
@@ -1083,14 +1054,6 @@ writeRecipe(FILE *fp,
     }
 }
 
-/*
- readRecipe loads the information from the text file to the nRecipe structure
- 
- @param fp - pointer to an open FILE containing the recipe data
- @param recipe - pointer to an nRecipe structure where the data will be stored
-
- Pre-condition: fp is non null
-*/
 void 
 readRecipe(FILE *fp, 
            nRecipe *recipe)
@@ -1106,6 +1069,7 @@ readRecipe(FILE *fp,
     //INGREDIENTS COUNT
     fscanf(fp, "%d", &recipe->ingreCount);
     
+        
     //LIST OF INGREDIENTS
     for(j = 0; j < recipe->ingreCount; j++)
     {
@@ -1125,15 +1089,6 @@ readRecipe(FILE *fp,
     }
 }
 
-/*
- exportRecipe writes the list of recipes to a text file
- 
- @param recipeList - array of nRecipe structures that contains recipe information to export
- @param recipeCount - number of recipes
- @param filename - name of the file to export
- 
- Pre-condition: there is at least one or more valid recipe
-*/
 void 
 exportRecipe(nRecipe recipeList[], 
              int recipeCount, 
@@ -1189,15 +1144,6 @@ exportRecipe(nRecipe recipeList[],
     }
 }
 
-/*
- importRecipe loads the information from the text file to the nRecipe structure
- 
- @param recipeList - array of nRecipe structures where imported data will be stored
- @param recipeCount - int pointer to the current number of recipes which will be updated
- @param filename - name of the file the user wants to import
- 
- Pre-condition: there is at least one or more valid recipe and text file exists and follows the correct recipe formatting
-*/
 void 
 importRecipe(nRecipe recipeList[], 
              int *recipeCount, 
@@ -1255,20 +1201,12 @@ importRecipe(nRecipe recipeList[],
 }
 
 
+
+
 /*
 ===============================
 |     ACCESS RECIPE BOX       |
 ===============================
-*/
-
-/*
- AgenList asks which recipe to generate a shopping list and the number of servings
- 
- @param recipeList - array of nRecipe structures containing the available recipes
- @param recipeCount - number of recipes
- @param servings - number of servings the user will cook for
- 
- Pre-condition: there is at least one or more valid recipe
 */
 void 
 AgenList(nRecipe recipeList[], 
@@ -1314,15 +1252,6 @@ AgenList(nRecipe recipeList[],
     }
 }
 
-/*
- AscanRecIngre asks user for an ingredient and shows the recipe information of all recipes its part of
- 
- @param recipeList - array of nRecipe structures containing the  recipes
- @param recipeCount - number of recipes
- @param ingredient - string of the ingredient name to search
- 
- Pre-condition: at least one valid recipe and ingredient
-*/
 void 
 AscanRecIngre(nRecipe recipeList[], 
               int recipeCount, 
@@ -1362,7 +1291,7 @@ AscanRecIngre(nRecipe recipeList[],
     }
 }
 
-
+// RECOMMEND MENU
 int 
 giveRandomInt(int recipeCount)
 {
@@ -1374,16 +1303,25 @@ giveRandomInt(int recipeCount)
 }
 
 void 
-Arecommend(nRecipe recipeList[], 
-           int recipeCount, 
-           nFoodInfo foodList[], 
-           int foodCount)
+Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int foodCount)
 {
     int i, j, k;
     int totalCal, cal, found, calIntake;
     int validIdx[recipeCount];
     int validCount = 0;
     int num;
+    
+    int starterRecomm = -1;
+    int dessertRecomm = -1;
+    
+    int starterCal = 0;
+    int mainCal = 0;
+    int dessertCal = 0;
+    
+    int validStarterIdx[recipeCount];
+    int validDessertIdx[recipeCount];
+    int validStarterCount = 0;
+    int validDessertCount = 0;
 
     if (recipeCount == 0)
     {
@@ -1394,7 +1332,6 @@ Arecommend(nRecipe recipeList[],
         printf("Enter target calorie intake: ");
         scanf("%d", &calIntake);
 
-        // find main course recipes that's < target calories
         validCount = 0;
         for (i = 0; i < recipeCount; i++)
         {
@@ -1430,11 +1367,9 @@ Arecommend(nRecipe recipeList[],
         }
         else
         {
-            // choose one random main course
             num = validIdx[giveRandomInt(validCount)];
-            totalCal = 0;
 
-            // calculate total cal
+            mainCal = 0;
             for (j = 0; j < recipeList[num].ingreCount; j++)
             {
                 cal = 0;
@@ -1447,38 +1382,148 @@ Arecommend(nRecipe recipeList[],
                         found = 1;
                     }
                 }
-                totalCal += cal;
+                mainCal += cal;
             }
 
-            // display recipe
-            printf("\n=====================================\n");
-            printf("%s %d servings %d calories\n", recipeList[num].nDishName, recipeList[num].servingSize, totalCal);
-
-            printf("\nIngredients:\n");
-            for (j = 0; j < recipeList[num].ingreCount; j++)
+            validStarterCount = 0;
+            for(i = 0; i < recipeCount; i++)
             {
-                cal = 0;
-                found = 0;
-                for (k = 0; k < foodCount && found == 0; k++)
+                totalCal = 0;
+                
+                if(strcmp(recipeList[i].nClassification, "starter") == 0)
                 {
-                    if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                    for(j = 0; j < recipeList[i].ingreCount; j++)
                     {
-                        cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
-                        found = 1;
+                        cal = 0;
+                        found = 0;
+                        
+                        // ✅ FIXED LOOP CONDITION ONLY
+                        for(k = 0; k < foodCount && found == 0; k++)
+                        {
+                            if(strcmp(recipeList[i].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                            {
+                                cal = (recipeList[i].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                                found = 1;
+                            }
+                        }
+                        totalCal += cal;
+                    }
+
+                    if (mainCal + totalCal <= calIntake)
+                    {
+                        validStarterIdx[validStarterCount] = i;
+                        validStarterCount++;
                     }
                 }
-
-                printf("%.0lf %s %-15s %d calories\n",
-                       recipeList[num].ingredientsList[j].Qty,
-                       recipeList[num].ingredientsList[j].UnitofMeas,
-                       recipeList[num].ingredientsList[j].FoodItem,
-                       cal);
             }
 
-            printf("\nProcedure:\n");
-            for (j = 0; j < recipeList[num].stepCount; j++)
+            if(validStarterCount > 0)
             {
-                printf("%d. %s\n", j + 1, recipeList[num].stepsList[j].directions);
+                starterRecomm = validStarterIdx[giveRandomInt(validStarterCount)];
+                
+                starterCal = 0;
+                for(j = 0; j < recipeList[starterRecomm].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
+                    {
+                        if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                        {
+                            cal = (recipeList[starterRecomm].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
+                        }
+                    }
+                    starterCal += cal;
+                }
+            }
+
+            validDessertCount = 0;
+            for(i = 0; i < recipeCount; i++)
+            {
+                totalCal = 0;
+                
+                if(strcmp(recipeList[i].nClassification, "dessert") == 0)
+                {
+                    for(j = 0; j < recipeList[i].ingreCount; j++)
+                    {
+                        cal = 0;
+                        found = 0;
+                        
+                        for (k = 0; k < foodCount && found == 0; k++)
+                        {
+                            if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                            {
+                                cal = (recipeList[starterRecomm].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                                found = 1;
+                            }
+                        }
+                        totalCal += cal;
+                    }
+
+                    if (mainCal + starterCal + totalCal <= calIntake)
+                    {
+                        validDessertIdx[validDessertCount] = i;
+                        validDessertCount++;
+                    }
+
+                    if(validDessertCount > 0)
+                    {
+                        dessertRecomm = validDessertIdx[giveRandomInt(validDessertCount)];
+                        
+                        dessertCal = 0;
+                        for(j = 0; j < recipeList[dessertRecomm].ingreCount; j++)
+                        {
+                            cal = 0;
+                            found = 0;
+                            
+                            for(k = 0; k < foodCount && found == 0; k++)
+                            {
+                                if(strcmp(recipeList[dessertRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                                {
+                                    cal =(recipeList[dessertRecomm].ingredientsList[j].Qty /foodList[k].Qty) * foodList[k].Calories;
+                                    found = 1;
+                                }
+                            }
+                            dessertCal += cal;
+                        }
+                    }
+
+                    printf("\nRECOMMENDED MENU:\n");
+                    printf("Total Menu Calories: %d\n", starterCal + mainCal + dessertCal);
+
+                    printf("\n=====================================\n");
+                    printf("MAIN COURSE\n");
+                    printf("%s %d servings %d calories\n", recipeList[num].nDishName, recipeList[num].servingSize, mainCal);
+
+                    printf("\nIngredients: \n");
+                    for (j = 0; j < recipeList[num].ingreCount; j++)
+                    {
+                        cal = 0;
+                        found = 0;
+                        
+                        for(k = 0; k < foodCount && found == 0; k++)
+                        {
+                            if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                            {
+                                cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                                found = 1;
+                            }
+                        }
+                        printf("%.0lf %s %-15s %d calories\n",
+                               recipeList[num].ingredientsList[j].Qty,
+                               recipeList[num].ingredientsList[j].UnitofMeas,
+                               recipeList[num].ingredientsList[j].FoodItem,
+                               cal);
+                    }
+
+                    printf("\nProcedure:\n");
+                    for (j = 0; j < recipeList[num].stepCount; j++)
+                    {
+                        printf("%d. %s\n", j + 1, recipeList[num].stepsList[j].directions);
+                    }
+                }
             }
         }
     }
@@ -1490,15 +1535,7 @@ Arecommend(nRecipe recipeList[],
 |            BONUS            |
 ===============================
 */
-
-/*
- AsortRecipe sorts recipe in descending alphabetical order based on its classification
- 
- @param recipeList - array of nRecipe structures containing the recipes
- @param recipeCount - number of recipes
- 
- Pre-condition: there is at least one or more valid recipe
-*/
+//	KEIONNA
 void 
 AsortRecipe(nRecipe recipeList[], 
             int recipeCount)
@@ -1527,16 +1564,6 @@ AsortRecipe(nRecipe recipeList[],
     }
 }
 
-/*
- AlistviewRecipe asks user whether to list or view recipes based on its classification
- 
- @param recipeList - array of nRecipe structures containing the recipes information
- @param recipeCount - number of recipes
- @param foodList - array of nFoodInfo structures that contains food item information
- @param foodCount - number of food items
-
- Pre-condition: there is at least one or more valid recipe and food information
-*/
 void 
 AlistviewRecipee(nRecipe recipeList[], 
                  int recipeCount, nFoodInfo foodList[], 
@@ -1854,13 +1881,12 @@ void topRated(nRating ratingList[], int ratingCount)
    }
 } 
 
-
-
 /*
 ===============================
-|         MAIN PROG           |
+|          MAIN PROG          |
 ===============================
 */
+
 
 int 
 main(void)
@@ -1869,8 +1895,12 @@ main(void)
     char nChoice;
     nFoodInfo foodList[100];
     int foodCount = 0;
+    
     nRecipe recipeList[MAX_RECIPES];
     int recipeCount = 0;
+    
+    nRating ratingList[MAX_RECIPES];
+	int ratingCount = 0;
     
     while(ProgramRuns)
     {
@@ -2172,6 +2202,17 @@ main(void)
                             case 'L':
                             case 'l':
                                 AlistviewRecipee(recipeList, recipeCount, foodList, foodCount);
+                                break;
+                            
+                            case '7':
+                                rateRecipe(recipeList, recipeCount, ratingList, &ratingCount);
+                                break;
+                            case '8':
+                            	viewRatings(ratingList, ratingCount);
+                            	break;
+                            case '9':
+                            	topRated(ratingList, ratingCount);
+                            	break;
                                 
                             case 'R': // RETURN BACK TO MAIN MENU
                             case 'r':
@@ -2179,7 +2220,7 @@ main(void)
                                 break;
                             
                             default:
-                                printf("INVALID");
+                                printf("INVALID\n\n");
                                 break;
                         }
                     }
@@ -2203,5 +2244,4 @@ main(void)
                 
             
     return 0;
-    
 }
