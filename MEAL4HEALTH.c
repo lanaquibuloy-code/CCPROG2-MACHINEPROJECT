@@ -68,6 +68,13 @@ typedef struct {
     str20 pass;
 } nAdminLogin;
 
+//WILL BE USED FOR BONUS FUCNTION
+typedef struct {
+	str20 dishName;
+	int totalRating;
+	int ratingCount;
+}nRating;
+
 /*
 ===============================
 |         MENU SCREENs       |
@@ -189,6 +196,12 @@ displayAccessRecipeBox(char *nChoice)
     printf("||%-33s||\n", " 5. Scan Recipes by Ingredient");
     printf("||%-33s||\n", " 6. Recommend Menu");
     printf("||%-33s||\n", " L. List/View by Category");
+    printf("+===================================+\n");
+    printf("||%-33s||\n", "        RATINGS");
+    printf("+===================================+\n");
+    printf("||%-33s||\n", " 7. Rate a Recipe");
+    printf("||%-33s||\n", " 8. View Ratings");
+    printf("||%-33s||\n", " 9. Show Top Recipe");
     
     printf("||%-33s||\n", " R. Exit Menu");
     printf("+===================================+\n");
@@ -1827,6 +1840,166 @@ AlistviewRecipee(nRecipe recipeList[],
     
     printf("\n");
 }
+
+//LANA 
+int ratingIndex (nRating ratingList[], int ratingCount, char dishName[])
+{
+	int i;
+	int idx = -1;
+	
+	for (i = 0; i < ratingCount; i++)
+	{
+		if(strcmp(ratingList[i].dishName, dishName) == 0)
+		{
+			idx = i;
+		}
+	}
+	return idx;
+}
+
+double getAvgRating(nRating rating)
+{
+	double avg;
+	
+	if(rating.ratingCount == 0)
+	{
+		avg = 0.0;
+	}
+	else 
+	{
+		avg = (double)rating.totalRating / rating.ratingCount;
+	}
+	
+	return avg;
+}
+
+void 
+rateRecipe(nRecipe recipeList[], int recipeCount, nRating ratingList[], int *ratingCount)
+{
+	str20 dishName;
+	int idx;
+	int rIdx;
+	int rating;
+	
+	if(recipeCount == 0)
+	{
+		printf("\nNo recipes recorded.\n");
+	}
+	else
+	{
+		listRecipe(recipeList, recipeCount);
+		
+		printf("\nEnter Recipe Name for Rating: ");
+		getchar();
+		readInput(dishName, 21);
+		
+		searchRecipe(recipeList, recipeCount, dishName, &idx);
+		
+		if(idx == -1)
+		{
+			printf("\nRecipe not found.\n");
+		}
+		else
+		{
+			do
+			{
+				printf("How was the recipe (1 to 5): ");
+				scanf("%d", &rating);
+				
+				if (rating < 1 || rating > 5)
+				{
+					printf("Invalid Rating.\n");
+				}
+			} while (rating < 1 || rating > 5);
+			
+			rIdx = ratingIndex(ratingList, *ratingCount, dishName);
+			
+			if(rIdx == -1)
+			{
+				strcpy(ratingList[*ratingCount].dishName, dishName);
+				ratingList[*ratingCount].totalRating = rating;
+				ratingList[*ratingCount].ratingCount = 1;
+				
+				(*ratingCount)++;
+			}
+			else 
+			{
+				ratingList[rIdx].totalRating += rating;
+				ratingList[rIdx].ratingCount++;
+			}
+			printf("\nRecipe has been successfully recorded!\n");
+		}
+		
+	}
+}
+
+void 
+viewRatings(nRating ratingList[], int ratingCount)
+{
+	int i;
+	double avg;
+	
+	if(ratingCount == 0)
+	{
+		printf("\nNo ratings yet.\n");
+	}
+	else 
+	{
+		//FIX IT 
+		printf("\n=============================================\n");
+		printf("| %-20s | %-10s | %-10s |\n", "Dish", "Average", "Count");
+		printf("=============================================\n");
+		
+		for(i = 0; i < ratingCount; i++)
+		{
+			avg = getAvgRating(ratingList[i]);
+			
+			printf("| %-20s | %-10.2lf | %-10d |\n", 
+			ratingList[i].dishName,
+			avg,
+			ratingList[i].ratingCount);
+		}
+		printf("=========================================\n");
+	}
+}
+
+void topRated(nRating ratingList[], int ratingCount)
+{
+	int i;
+	int best = 0;
+	int found = 0;
+	double bestAvg = 0.0;
+	double curr; //the current rating of a dish/recipe
+	
+	if(ratingCount == 0)
+	{
+		printf("No ratings yet.\n");
+	}
+	else
+	{
+		for(i = 0; i < ratingCount; i++)
+		{
+			curr = getAvgRating(ratingList[i]);
+			
+			if(found == 0 || curr > bestAvg)
+			{
+				bestAvg = curr;
+				best = i;
+				found = 1;
+			}
+		}
+		if(found == 0)
+		{
+			printf("\nNo ratings yet.\n");
+		}
+		else
+		{
+			printf("\nTop Rated Dish: %s\n", ratingList[best].dishName);
+			printf("Average Rating: %.2lf\n", bestAvg);
+			printf("Number of Ratings: %d\n", ratingList[best].ratingCount);
+		}
+   }
+} 
 
 
 
