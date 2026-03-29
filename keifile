@@ -23,6 +23,7 @@
 #define MAX_RECIPES              50
 #define MAX_INGREDIENTS          20
 #define MAX_STEPS                15
+#define MAX_FOODITEM             50
 
 //CHARACTER LIMITATIONS
 typedef char str20[21]; //NAME OF DISH & NAME OF ITEN USED
@@ -156,7 +157,8 @@ displayUpdateRecipeBox(char *nChoice)
     printf("||%-33s||\n", " 2. View Food-Calorie Chart");
     printf("||%-33s||\n", " 3. Save Calorie Info");
     printf("||%-33s||\n", " 4. Load Calorie Info");
-    
+    printf("||%-33s||\n", " B. Modify Calorie Info");
+
     printf("+===================================+\n");
     printf("||%-33s||\n", "        RECIPE DATABASE");
     printf("+===================================+\n");
@@ -758,24 +760,24 @@ saveFoodInfo(nFoodInfo foodList[],
              int foodCount)
 {
     int i;
-    char filename[21];
+    str20 filename;
     
     FILE*fp;
-            
+    
     printf("\nEnter filename('.txt' included): ");
     scanf("%20s", filename);
     
-    fp=fopen(filename,"w");
-
-    if (fp!=NULL)
+    if(strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".txt") == 0)
     {
-        if(foodCount!=0)
+        fp = fopen(filename,"w");
+        
+        if (fp != NULL)
         {
-            if(strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".txt") == 0)
+            if(foodCount != 0)
             {
-                for(i=0;i<foodCount;i++)
+                for(i = 0; i < foodCount; i++)
                 {
-                    fprintf(fp, "%s \n%.0lf %s %d calories \n",
+                    fprintf(fp, "%s\n%.0lf %s %d\n\n",
                             foodList[i].FoodItem,
                             foodList[i].Qty,
                             foodList[i].UnitofMeas,
@@ -787,18 +789,17 @@ saveFoodInfo(nFoodInfo foodList[],
             }
             else
             {
-                printf("\nPlease include the .txt extension.\n\n");
+                printf("\nNo food item available for saving.\n\n");
             }
         }
         else
         {
-            printf("\nNo food item available for saving.\n\n");
-
+            printf("FILE OPENING ERROR.\n");
         }
     }
     else
     {
-        printf("FILE OPENING ERROR.\n");
+        printf("\nPlease include the .txt extension.\n\n");
     }
 }
 
@@ -814,8 +815,8 @@ void
 loadFoodInfo(nFoodInfo foodList[],
              int *foodCount)
 {
-    int i, found, replace;
-    char filename[21];
+    int i, replace, exists, runs=1;
+    str20 filename;
    
     FILE*fp;
 
@@ -823,51 +824,60 @@ loadFoodInfo(nFoodInfo foodList[],
     scanf("%20s", filename);
     
     fp=fopen(filename,"r");
-
-    if(fp!=NULL)
-    {
-        while(fscanf(fp, " %20[^\n]\n%lf %15s %d calories\n",
-                      foodList[*foodCount].FoodItem,
-                      &foodList[*foodCount].Qty,
-                      foodList[*foodCount].UnitofMeas,
-                      &foodList[*foodCount].Calories) == 4)
+    
+    if(fp != NULL)
         {
-            found = -1;
-
-            for (i = 0; i < *foodCount; i++)
+            
+            while(runs &&
+                  fscanf(fp, " %20[^\n]\n%lf %15s %d calories\n",
+                         foodList[*foodCount].FoodItem,
+                         &foodList[*foodCount].Qty,
+                         foodList[*foodCount].UnitofMeas,
+                         &foodList[*foodCount].Calories) == 4)
             {
-                if (strcmp(foodList[i].FoodItem, foodList[*foodCount].FoodItem) == 0)
+                exists=0;
+                
+                if(*foodCount < MAX_FOODITEM)
                 {
-                    found = i;
+                    for (i = 0; i < *foodCount; i++)
+                    {
+                        if (strcmp(foodList[i].FoodItem,
+                                   foodList[*foodCount].FoodItem) == 0)
+                        {
+                            exists = 1;
+                            
+                            printf("\nFood item \"%s\" already exists.\n",
+                                   foodList[*foodCount].FoodItem);
+                            printf("[1] Yes\n");
+                            printf("[2] No\n");
+                            printf("Replace existing data?: ");
+                            scanf("%d", &replace);
+                            
+                            if (replace == 1)
+                            {
+                                foodList[i] = foodList[*foodCount];
+                            }
+                        }
+                    }
+                    if(exists == 0)
+                    {
+                        (*foodCount)++;
+                    }
+                }
+                else
+                {
+                    printf("Food list is full.\n");
+                    runs = 0;
                 }
             }
 
-            if (found != -1)
-            {
-                printf("\nFood item \"%s\" already exists.\n", foodList[*foodCount].FoodItem);
-                printf("[1] Yes\n");
-                printf("[2] No\n");
-                printf("Replace existing data?: ");
-                scanf("%d", &replace);
-
-                if (replace == 1)
-                {
-                    foodList[found] = foodList[*foodCount];
-                }
-            }
-            else
-            {
-                (*foodCount)++;
-            }
+            fclose(fp);
+            printf("Success! Returning to main menu..\n");
         }
-        
-        fclose(fp);
-        printf("Success! Returning to main menu..\n");
-    }
-    else
-    {
-        printf("ERROR OPENING FILE.\n");
-    }
+        else
+        {
+            printf("ERROR OPENING FILE.\n");
+        }
 }
 
 /*
@@ -1509,6 +1519,116 @@ Arecommend(nRecipe recipeList[],
 */
 
 /*
+ modifyFoodInfo asks user to modify a certain food item and changes its information
+ 
+ @param foodList - array of nFoodInfo structures that contains food item information
+ @param foodCount - current number of food items
+ 
+ Pre-condition: foodCount > 0 and foodList contains valid data
+*/
+void modifyFoodInfo(nFoodInfo foodList[], int *foodCount)
+{
+    str20 search;
+    int i, runs=1;
+    int choice, found=0;;
+    
+    if(*foodCount==0)
+    {
+        printf("\nNo food item available for modifications.\n\n");
+    }
+    else
+    {
+        while(runs)
+        {
+            printf("\nEnter the exact name of the food item to modify: ");
+            scanf(" %20[^\n]", search);
+            
+            for (i = 0; i < *foodCount; i++)
+            {
+                if (strcmp(foodList[i].FoodItem, search)== 0)
+                {
+                    found=1;
+                    
+                    printf("\nCurrent information for '%s':\n", foodList[i].FoodItem);
+                    printf("Quantity : %.2lf %s\n", foodList[i].Qty, foodList[i].UnitofMeas);
+                    printf("Calories : %d\n", foodList[i].Calories);
+                    
+                    printf("\nWhat would you like to modify?\n");
+                    printf("[1] Food item\n");
+                    printf("[2] Quantity\n");
+                    printf("[3] Unit\n");
+                    printf("[4] Calorie count\n");
+                    printf("[5] All\n");
+                    printf("Enter choice: ");
+                    scanf("%d", &choice);
+                    
+                    if(choice==1)
+                    {
+                        printf("Enter new name: ");
+                        scanf("%s", foodList[i].FoodItem);
+                        
+                        printf("\nFood item '%s' updated successfully!\n", foodList[i].FoodItem);
+                        runs=0;
+                    }
+                    else if(choice==2)
+                    {
+                        printf("Enter new quantity: ");
+                        scanf("%lf", &foodList[i].Qty);
+                        
+                        printf("\nFood item '%s' updated successfully!\n", foodList[i].FoodItem);
+                        runs=0;
+                    }
+                    else if(choice==3)
+                    {
+                        printf("Enter new unit of measurement: ");
+                        scanf(" %15[^\n]", foodList[i].UnitofMeas);
+
+                        printf("\nFood item '%s' updated successfully!\n", foodList[i].FoodItem);
+                        runs=0;
+                    }
+                    else if(choice==4)
+                    {
+                        printf("Enter new calorie count: ");
+                        scanf("%d", &foodList[i].Calories);
+                        
+                        printf("\nFood item '%s' updated successfully!\n", foodList[i].FoodItem);
+                        runs=0;
+                    }
+                    else if(choice==5)
+                    {
+                        printf("Enter new name: ");
+                        scanf("%s", foodList[i].FoodItem);
+                        
+                        printf("Enter new quantity: ");
+                        scanf("%lf", &foodList[i].Qty);
+                        
+                        printf("Enter new unit of measurement: ");
+                        scanf(" %15[^\n]", foodList[i].UnitofMeas);
+                        
+                        printf("Enter new calorie count: ");
+                        scanf("%d", &foodList[i].Calories);
+                        
+                        printf("\nFood item '%s' updated successfully!\n", foodList[i].FoodItem);
+                        runs=0;
+                    }
+                    else
+                    {
+                        printf("Invalid choice. \n");
+                    }
+                
+                }
+            }
+            
+            if(found == 0)
+            {
+                printf("\nFood item '%s' not found. Check for any spelling errors.\n", search);
+            }
+
+        }
+    }
+}
+
+/*
  AsortRecipe sorts recipe in descending alphabetical order based on its classification
  
  @param recipeList - array of nRecipe structures containing the recipes
@@ -1930,6 +2050,11 @@ main(void)
                                     loadFoodInfo(foodList, &foodCount);
                                     break;
                                     
+                                case 'B':
+                                case 'b':
+                                    modifyFoodInfo(foodList, &foodCount);
+                                    break;
+                                    
                                 case '5': //Add recipe
                                     addRecipe(recipeList, &recipeCount);
                                     break;
@@ -2005,7 +2130,7 @@ main(void)
                                                     case '4': // DELETE STEP
                                                         deleteStep(&recipeList[nRep]);
                                                         break;
-                                                    
+                                                                                                            
                                                     case 'R':
                                                     case 'r':
                                                         inModifyChoice = 0;
@@ -2170,7 +2295,7 @@ main(void)
                                 
                             case '5': //SCAN RECIPE BY INGREDIENT
                             {
-                                char ingredient[21];
+                                str20 ingredient;
                                 
                                 printf("Enter Ingredient Name: ");
                                 scanf(" %20[^\n]", ingredient);
