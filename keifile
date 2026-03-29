@@ -680,26 +680,54 @@ deleteStep(nRecipe *recipe)
 
  Pre-condition: user inputs appropriate and same data type
 */
-void
-addFoodInfo(nFoodInfo foodList[],
-            int *foodCount)
+void addFoodInfo(nFoodInfo foodList[], int *foodCount)
 {
-    printf("Enter Food Item: ");
-    scanf(" %20[^\n]", foodList[*foodCount].FoodItem);
-
-    printf("Enter Quantity: ");
-    scanf("%lf", &foodList[*foodCount].Qty);
-
-    printf("Enter Unit: ");
-    scanf(" %15[^\n]", foodList[*foodCount].UnitofMeas);
-
-    printf("Enter Calorie Count: ");
-    scanf("%d", &foodList[*foodCount].Calories);
-
-    printf("\nFood item added successfully!\n\n");
-
-    (*foodCount)++;
+    int runs = 1;
+    int i;
+    str20 newFood;
+    int duplicate = 0;
+    
+    while(runs)
+    {
+            do{
+            printf("Enter Food Item: ");
+            scanf(" %20[^\n]", newFood);
+            
+            for (i=0; i < *foodCount; i++)
+            {
+                if (strcmp(foodList[i].FoodItem, newFood) == 0)
+                {
+                    duplicate = 1;
+                }
+            }
+            
+            if (duplicate)
+            {
+                printf("\nFood item '%s' already exists. Cannot add duplicate.\n\n", newFood);
+                runs = 0;
+            }
+            else
+            {
+                strcpy(foodList[*foodCount].FoodItem, newFood);
+                
+                printf("Enter Quantity: ");
+                scanf("%lf", &foodList[*foodCount].Qty);
+                
+                printf("Enter Unit: ");
+                scanf(" %15[^\n]", foodList[*foodCount].UnitofMeas);
+                
+                printf("Enter Calorie Count: ");
+                scanf("%d", &foodList[*foodCount].Calories);
+                
+                (*foodCount)++;
+                
+                printf("\nFood item '%s' added successfully!\n\n", newFood);
+                runs = 0;
+            }
+        }while(*foodCount < MAX_FOODITEM && runs == 1);
+    }
 }
+
 
 /*
  viewFoodInfo displays 10 food items at a time
@@ -817,6 +845,7 @@ loadFoodInfo(nFoodInfo foodList[],
 {
     int i, replace, exists, runs=1;
     str20 filename;
+    char space[2];
    
     FILE*fp;
 
@@ -835,6 +864,8 @@ loadFoodInfo(nFoodInfo foodList[],
                          foodList[*foodCount].UnitofMeas,
                          &foodList[*foodCount].Calories) == 4)
             {
+                fgets(space, sizeof(space), fp);
+
                 exists=0;
                 
                 if(*foodCount < MAX_FOODITEM)
@@ -1550,8 +1581,7 @@ void modifyFoodInfo(nFoodInfo foodList[], int *foodCount)
                     found=1;
                     
                     printf("\nCurrent information for '%s':\n", foodList[i].FoodItem);
-                    printf("Quantity : %.2lf %s\n", foodList[i].Qty, foodList[i].UnitofMeas);
-                    printf("Calories : %d\n", foodList[i].Calories);
+                    printf("%.2lf %s %d calories\n", foodList[i].Qty, foodList[i].UnitofMeas, foodList[i].Calories);
                     
                     printf("\nWhat would you like to modify?\n");
                     printf("[1] Food item\n");
