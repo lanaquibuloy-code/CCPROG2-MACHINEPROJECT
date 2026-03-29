@@ -1066,53 +1066,66 @@ exportRecipe(nRecipe recipeList[],
              int recipeCount, 
              char filename[])
 {
-   FILE *fp;
-   int i;
-   int j;
-   
-   char FinalName[100];
-   
-   strcpy(FinalName, filename);
-   int len = strlen(FinalName);
-   
-   if(len < 4 || strcmp(&FinalName[len - 4], ".txt") != 0)
-   {
-       strcat(FinalName, ".txt");
-   }
-   
-   fp = fopen(FinalName, "w");
-   
-   if(fp != NULL)
-   {
-       for (i = 0; i < recipeCount; i++)
-       {
-           fprintf(fp, "%s\n", recipeList[i].nDishName); //DISH NAME
-        fprintf(fp, "%d %s\n", recipeList[i].servingSize, recipeList[i].nClassification); //SERVING SIZE + CLASSIFICATION
-        
-        fprintf(fp, "%d\n", recipeList[i].ingreCount);
-        
-        for (j = 0; j < recipeList[i].ingreCount; j++)
-        {
-            fprintf(fp, "%.2lf %s %s\n",
-              recipeList[i].ingredientsList[j].Qty,
-              recipeList[i].ingredientsList[j].UnitofMeas,
-              recipeList[i].ingredientsList[j].FoodItem);
-       }
-       
-       fprintf(fp, "%d\n", recipeList[i].stepCount);
-       
-       for(j = 0; j < recipeList[i].stepCount; j ++)
-       {
-           fprintf(fp, "%s\n", recipeList[i].stepsList[j].directions);
-       }
-   }
-   
-   fclose(fp);
-   printf("File has been succesfully exported!\n\n");
+    FILE *fp;
+    int i;
+    int j;
+    int len;
+    int validFile = 1;
+
+    len = strlen(filename);
+
+    if(recipeCount == 0)
+    {
+        printf("There are no recipes to export.\n\n");
     }
     else
     {
-        printf("Try again. An error occured exporting the file.\n\n");
+        if(len < 4 || strcmp(&filename[len - 4], ".txt") != 0)
+        {
+            printf("Error: Please include .txt in the filename.\n\n");
+            validFile = 0;
+        }
+
+        if(validFile == 1)
+        {
+            fp = fopen(filename, "w");
+
+            if(fp != NULL)
+            {
+                for(i = 0; i < recipeCount; i++)
+                {
+                    fprintf(fp, "%s\n", recipeList[i].nDishName);
+                    fprintf(fp, "%d %s\n",
+                            recipeList[i].servingSize,
+                            recipeList[i].nClassification);
+
+                    fprintf(fp, "Ingredients %d\n", recipeList[i].ingreCount);
+
+                    for(j = 0; j < recipeList[i].ingreCount; j++)
+                    {
+                        fprintf(fp, "%.2lf %s %s\n",
+                                recipeList[i].ingredientsList[j].Qty,
+                                recipeList[i].ingredientsList[j].UnitofMeas,
+                                recipeList[i].ingredientsList[j].FoodItem);
+                    }
+
+                    fprintf(fp, "Steps %d\n", recipeList[i].stepCount);
+
+                    for(j = 0; j < recipeList[i].stepCount; j++)
+                    {
+                        fprintf(fp, "%s\n",
+                                recipeList[i].stepsList[j].directions);
+                    }
+                }
+
+                fclose(fp);
+                printf("All recipes have been successfully exported!\n\n");
+            }
+            else
+            {
+                printf("Try again. An error occurred exporting the file.\n\n");
+            }
+        }
     }
 }
 
@@ -1126,6 +1139,18 @@ exportRecipe(nRecipe recipeList[],
  Pre-condition: 
  There is at least one or more valid recipe and text file exists and follows the correct recipe formatting
  The filename must include the ".txt" extension
+ The file must follow the required format 
+ <Recipe Title1><next line>
+<Serving Size><space><Classification><next line>
+Ingredients<space><ingredient count><next line>
+<Quantity><space><Unit><space><Item1><next line>
+<Quantity><space><Unit><space><Item2><next line>
+
+Post-condition:
+If there is a duplicate found in the user is then given choices
+[S] -> ignore imported recipe
+[R] -> overwrite it
+[X] -> stop import all together
 */
 
 void 
@@ -1134,57 +1159,178 @@ importRecipe(nRecipe recipeList[],
              char filename[])
 {
     FILE *fp;
+    int i;
     int j;
+    int len;
+    int validFile = 1;
+    int formatOK = 1;
+    int duplicateRep;
+    int duplicateIdx;
+    int stopImport = 0;
+    char choice;
+    char label[20];
+    str20 tempDishName;
+    nRecipe tempRecipe;
 
-    int len = strlen(filename);
-
-// Makes user add .txt at the end each time they import a recipe
+    len = strlen(filename);
+    
+    // user will need to add .txt extension with the file name
     if(len < 4 || strcmp(&filename[len - 4], ".txt") != 0)
     {
         printf("Error: Please include .txt in the filename.\n\n");
+        validFile = 0;
     }
-    else
+
+//checks if file is the correct format
+    if(validFile == 1)
     {
         fp = fopen(filename, "r");
 
         if(fp != NULL)
         {
-            while(fscanf(fp, " %20[^\n]\n", recipeList[*recipeCount].nDishName) == 1)
+            while(*recipeCount < MAX_RECIPES &&
+                  formatOK == 1 &&
+                  stopImport == 0 &&
+                  fscanf(fp, " %20[^\n]\n", tempDishName) == 1)
             {
-                fscanf(fp, "%d %15s\n",
-                       &recipeList[*recipeCount].servingSize,
-                       recipeList[*recipeCount].nClassification);
+                duplicateRep = 0;
+                duplicateIdx = -1;
 
-                fscanf(fp, "%d\n", &recipeList[*recipeCount].ingreCount);
-
-                for(j = 0; j < recipeList[*recipeCount].ingreCount; j++)
+                for(i = 0; i < *recipeCount && duplicateRep == 0; i++)
                 {
-                    fscanf(fp, "%lf %s %s\n",
-                           &recipeList[*recipeCount].ingredientsList[j].Qty,
-                           recipeList[*recipeCount].ingredientsList[j].UnitofMeas,
-                           recipeList[*recipeCount].ingredientsList[j].FoodItem);
+                    if(strcmp(recipeList[i].nDishName, tempDishName) == 0)
+                    {
+                        duplicateRep = 1;
+                        duplicateIdx = i;
+                    }
                 }
 
-                fscanf(fp, "%d\n", &recipeList[*recipeCount].stepCount);
+                strcpy(tempRecipe.nDishName, tempDishName);
 
-                for(j = 0; j < recipeList[*recipeCount].stepCount; j++)
+                if(fscanf(fp, "%d %15s\n",
+                          &tempRecipe.servingSize,
+                          tempRecipe.nClassification) != 2)
                 {
-                    fscanf(fp, " %70[^\n]\n",
-                           recipeList[*recipeCount].stepsList[j].directions);
+                    formatOK = 0;
                 }
 
-                (*recipeCount)++;
+                if(formatOK == 1)
+                {
+                    if(fscanf(fp, "%19s %d\n",
+                              label,
+                              &tempRecipe.ingreCount) != 2)
+                    {
+                        formatOK = 0;
+                    }
+                    else if(strcmp(label, "Ingredients") != 0)
+                    {
+                        formatOK = 0;
+                    }
+                }
+
+                if(formatOK == 1)
+                {
+                    for(j = 0; j < tempRecipe.ingreCount; j++)
+                    {
+                        if(fscanf(fp, "%lf %15s %20s\n",
+                                  &tempRecipe.ingredientsList[j].Qty,
+                                  tempRecipe.ingredientsList[j].UnitofMeas,
+                                  tempRecipe.ingredientsList[j].FoodItem) != 3)
+                        {
+                            formatOK = 0;
+                            j = tempRecipe.ingreCount;
+                        }
+                    }
+                }
+
+                if(formatOK == 1)
+                {
+                    if(fscanf(fp, "%19s %d\n",
+                              label,
+                              &tempRecipe.stepCount) != 2)
+                    {
+                        formatOK = 0;
+                    }
+                    else if(strcmp(label, "Steps") != 0)
+                    {
+                        formatOK = 0;
+                    }
+                }
+
+                if(formatOK == 1)
+                {
+                    for(j = 0; j < tempRecipe.stepCount; j++)
+                    {
+                        if(fscanf(fp, " %70[^\n]\n",
+                                  tempRecipe.stepsList[j].directions) != 1)
+                        {
+                            formatOK = 0;
+                            j = tempRecipe.stepCount;
+                        }
+                    }
+                }
+
+                if(formatOK == 1)
+                {
+                    if(duplicateRep == 1)
+                    {
+                        printf("\nRecipe \"%s\" already exists.\n", tempRecipe.nDishName);
+                        printf("[S] Skip\n");
+                        printf("[R] Replace\n");
+                        printf("[X] Stop\n");
+                        printf("Enter choice: ");
+                        scanf(" %c", &choice);
+
+                        if(choice == 'S' || choice == 's')
+                        {
+                            printf("Recipe has been skipped.\n");
+                        }
+                        else if(choice == 'R' || choice == 'r')
+                        {
+                            recipeList[duplicateIdx] = tempRecipe;
+                            printf("Recipe replaced successfully.\n");
+                        }
+                        else if(choice == 'X' || choice == 'x')
+                        {
+                            stopImport = 1;
+                        }
+                        else
+                        {
+                            printf("Invalid choice. Recipe skipped.\n");
+                        }
+                    }
+                    else
+                    {
+                        recipeList[*recipeCount] = tempRecipe;
+                        (*recipeCount)++;
+                    }
+                }
             }
+
             fclose(fp);
-            printf("File has been imported successfully!\n\n");
+
+            if(formatOK == 1)
+            {
+                if(stopImport == 1)
+                {
+                    printf("\nImport stopped by user.\n\n");
+                }
+                else
+                {
+                    printf("File has been imported successfully!\n\n");
+                }
+            }
+            else
+            {
+                printf("Error: File format is invalid. Please follow the required import format.\n\n");
+            }
         }
-        else 
+        else
         {
             printf("Try again! An error occurred with importing the file.\n\n");
         }
     }
 }
-
 
 /*
 ===============================
@@ -1203,27 +1349,41 @@ importRecipe(nRecipe recipeList[],
 */
 void 
 AgenList(nRecipe recipeList[], 
-         int recipeCount, 
-         int servings)
+         int recipeCount)
 {
     int j;
     int idx;
-    
-    
+    int servings;
     str20 dishName;
     double newQty; // change quantity based on the serving size for the recipe
     
-    //USER FIRST PUTS THE NAME OF THE RECIPE
-    printf("Enter Recipe Name: ");
-    scanf("%20[^\n]", dishName);
-    
-    //FIND RECIPE USING THE SEARCH RECIPE FUNCTION
-    searchRecipe(recipeList,recipeCount,dishName, &idx);
-    
-    //checks if recipe exists
-    if(idx != -1)
+    if(recipeCount == 0)
     {
-        printf("--- SHOPPING LIST---");
+    	printf("\nNo recipes available.\n");
+	}
+	else
+	{
+		//list of all the recipes(titles only
+		listRecipe(recipeList, recipeCount);
+		
+		//USER FIRST PUTS THE NAME OF THE RECIPE
+		printf("Enter Recipe Name: ");
+		getchar();
+		readInput(dishName, 21);
+		
+		//Serving size for amount of people
+		printf("How many will be eating?: ");
+		scanf("%d", &servings);
+		
+		//Looks for said recipe
+		searchRecipe(recipeList,recipeCount,dishName, &idx);
+		
+		if(idx != -1)
+    {
+        printf("\n--- SHOPPING LIST---\n");
+        printf("Recipe: %s\n", recipeList[idx].nDishName);
+        printf("Original Serving Size: %d\n", recipeList[idx].servingSize);
+        printf("Adjusted: %d servings\n\n", servings);
         
         for(j = 0; j < recipeList[idx].ingreCount; j++)
         {
@@ -1237,12 +1397,14 @@ AgenList(nRecipe recipeList[],
             recipeList[idx].ingredientsList[j].FoodItem);
         }
         
-        printf("\nBased on %d servings.\n", servings);
+        printf("Returning to Access Mode Menu....\n\n");
     }
-    else
+    else 
     {
-        printf("\nRecipe Not Found.\n\n");
-    }
+    	printf("Recipe not in database.\n\n");
+	}
+    
+	}
 }
 
 /*
@@ -1253,44 +1415,135 @@ AgenList(nRecipe recipeList[],
  @param ingredient - string of the ingredient name to search
  
  Pre-condition: at least one valid recipe and ingredient
+ Post-condition: matching recipes are displayed
 */
 
 void 
 AscanRecIngre(nRecipe recipeList[], 
               int recipeCount, 
-              char ingredient[])
+              char ingredient[],
+              nFoodInfo foodList[],
+              int foodCount)
 {
-    int i;
-    int j;
-    int foundRecipe = 0; //checks if recipe is there
+    int i, j, k;
+    int matchedIdx[MAX_RECIPES];
+    int matchCount = 0;
+    int currentRep = 0;
     int foundIngre;
-    
-    for(i = 0; i < recipeCount; i++)
+    int found;
+    int totalCal;
+    double cal;
+    char choice = 'N';
+
+    if(recipeCount == 0)
     {
-         foundIngre = 0;
-         
-        //runs through the ingredients in the recipe list
-        for (j = 0; j < recipeList[i].ingreCount && foundIngre == 0; j++)
-        {
-            if(strcmp(recipeList[i].ingredientsList[j].FoodItem, ingredient) == 0)
-            {
-                foundIngre = 1;
-            }
-            
-        }
-        
-        //ingredient is found in the recipe,
-        if(foundIngre == 1)
-        {
-            printf("%s\n", recipeList[i].nDishName);
-            foundRecipe = 1;
-        }
+        printf("\nNo recipes available.\n");
     }
-    
-    //the recipe does not contain the ingredient
-    if(foundRecipe == 0)
+    else
     {
-        printf("No Ingredient is found in the recipe/\n");
+        sortRecipe(recipeList, recipeCount);
+
+        // finds all recipes containing the ingredient 
+        for(i = 0; i < recipeCount; i++)
+        {
+            foundIngre = 0;
+
+            for(j = 0; j < recipeList[i].ingreCount && foundIngre == 0; j++)
+            {
+                if(strcmp(recipeList[i].ingredientsList[j].FoodItem, ingredient) == 0)
+                {
+                    foundIngre = 1;
+                }
+            }
+
+            if(foundIngre == 1)
+            {
+                matchedIdx[matchCount] = i;
+                matchCount++;
+            }
+        }
+
+        if(matchCount == 0)
+        {
+            printf("\nNo recipe contains that ingredient.\n");
+        }
+        else
+        {
+            printf("\nThere are %d recipe/s containing %s.\n", matchCount, ingredient);
+
+            while(currentRep >= 0 && currentRep < matchCount &&
+                  (choice == 'N' || choice == 'n' || choice == 'P' || choice == 'p'))
+            {
+                i = matchedIdx[currentRep];
+                totalCal = 0;
+
+                for(j = 0; j < recipeList[i].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+
+                    for(k = 0; k < foodCount && found == 0; k++)
+                    {
+                        if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
+                        {
+                            cal = (recipeList[i].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
+                        }
+                    }
+
+                    totalCal += cal;
+                }
+
+                printf("\n=======================================\n");
+                printf("Recipe %d of %d\n", currentRep + 1, matchCount);
+                printf("%s\n", recipeList[i].nDishName);
+                printf("Serving Size: %d\n", recipeList[i].servingSize);
+                printf("Classification: %s\n", recipeList[i].nClassification);
+                printf("Total Calories: %d\n", totalCal);
+                printf("=======================================\n");
+
+                printf("\nIngredients:\n");
+                for(j = 0; j < recipeList[i].ingreCount; j++)
+                {
+                    printf("%.2lf %s %s\n",
+                           recipeList[i].ingredientsList[j].Qty,
+                           recipeList[i].ingredientsList[j].UnitofMeas,
+                           recipeList[i].ingredientsList[j].FoodItem);
+                }
+
+                printf("\nProcedure:\n");
+                for(j = 0; j < recipeList[i].stepCount; j++)
+                {
+                    printf("%d. %s\n", j + 1, recipeList[i].stepsList[j].directions);
+                }
+
+                printf("\nPress N to view next recipe.");
+                printf("\nPress P to view previous recipe.");
+                printf("\nPress X to exit.");
+                printf("\nEnter: ");
+                scanf(" %c", &choice);
+
+                if(choice == 'N' || choice == 'n')
+                {
+                    if(currentRep < matchCount - 1)
+                        currentRep++;
+                    else
+                    {
+                        printf("\nThis is the last matching recipe.\n");
+                        choice = 'X';
+                    }
+                }
+                else if(choice == 'P' || choice == 'p')
+                {
+                    if(currentRep > 0)
+                        currentRep--;
+                    else
+                        printf("\nThis is the first matching recipe.\n");
+                }
+            }
+        }
     }
 }
 
@@ -1310,23 +1563,24 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
 {
     int i, j, k;
     int totalCal, cal, found, calIntake;
-    int validIdx[recipeCount];
-    int validCount = 0;
-    int num;
     
+    int validMainIdx[MAX_RECIPES];
+    int validStarterIdx[MAX_RECIPES];
+    int validDessertIdx[MAX_RECIPES];
+    
+    int validMainCount = 0;
+    int validStarterCount = 0;
+    int validDessertCount = 0;
+    
+    int mainRecomm = -1;
     int starterRecomm = -1;
     int dessertRecomm = -1;
     
-    int starterCal = 0;
     int mainCal = 0;
+    int starterCal = 0;
     int dessertCal = 0;
-    
-    int validStarterIdx[recipeCount];
-    int validDessertIdx[recipeCount];
-    int validStarterCount = 0;
-    int validDessertCount = 0;
 
-    if (recipeCount == 0)
+    if(recipeCount == 0)
     {
         printf("\nNo recipes available.\n");
     }
@@ -1335,60 +1589,70 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
         printf("Enter target calorie intake: ");
         scanf("%d", &calIntake);
 
-        validCount = 0;
-        for (i = 0; i < recipeCount; i++)
+        /* FIND ALL VALID MAIN COURSES */
+        for(i = 0; i < recipeCount; i++)
         {
             totalCal = 0;
-            if (strcmp(recipeList[i].nClassification, "main") == 0)
+            
+            if(strcmp(recipeList[i].nClassification, "main") == 0)
             {
-                for (j = 0; j < recipeList[i].ingreCount; j++)
+                for(j = 0; j < recipeList[i].ingreCount; j++)
                 {
                     cal = 0;
                     found = 0;
-                    for (k = 0; k < foodCount && found == 0; k++)
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
                     {
-                        if (strcmp(recipeList[i].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                        if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
                         {
-                            cal = (recipeList[i].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                            cal = (recipeList[i].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
                             found = 1;
                         }
                     }
+                    
                     totalCal += cal;
                 }
 
-                if (totalCal <= calIntake)
+                if(totalCal <= calIntake)
                 {
-                    validIdx[validCount] = i;
-                    validCount++;
+                    validMainIdx[validMainCount] = i;
+                    validMainCount++;
                 }
             }
         }
 
-        if (validCount == 0)
+        if(validMainCount == 0)
         {
             printf("\nNo main courses available under target calories.\n");
         }
         else
         {
-            num = validIdx[giveRandomInt(validCount)];
+            /* RANDOM MAIN COURSE */
+            mainRecomm = validMainIdx[giveRandomInt(validMainCount)];
 
             mainCal = 0;
-            for (j = 0; j < recipeList[num].ingreCount; j++)
+            for(j = 0; j < recipeList[mainRecomm].ingreCount; j++)
             {
                 cal = 0;
                 found = 0;
-                for (k = 0; k < foodCount && found == 0; k++)
+                
+                for(k = 0; k < foodCount && found == 0; k++)
                 {
-                    if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                    if(strcmp(recipeList[mainRecomm].ingredientsList[j].FoodItem,
+                              foodList[k].FoodItem) == 0)
                     {
-                        cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                        cal = (recipeList[mainRecomm].ingredientsList[j].Qty /
+                               foodList[k].Qty) * foodList[k].Calories;
                         found = 1;
                     }
                 }
+                
                 mainCal += cal;
             }
 
-            validStarterCount = 0;
+            /* FIND VALID STARTERS */
             for(i = 0; i < recipeCount; i++)
             {
                 totalCal = 0;
@@ -1402,16 +1666,19 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
                         
                         for(k = 0; k < foodCount && found == 0; k++)
                         {
-                            if(strcmp(recipeList[i].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                            if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                                      foodList[k].FoodItem) == 0)
                             {
-                                cal = (recipeList[i].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                                cal = (recipeList[i].ingredientsList[j].Qty /
+                                       foodList[k].Qty) * foodList[k].Calories;
                                 found = 1;
                             }
                         }
+                        
                         totalCal += cal;
                     }
 
-                    if (mainCal + totalCal <= calIntake)
+                    if(mainCal + totalCal <= calIntake)
                     {
                         validStarterIdx[validStarterCount] = i;
                         validStarterCount++;
@@ -1422,7 +1689,7 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
             if(validStarterCount > 0)
             {
                 starterRecomm = validStarterIdx[giveRandomInt(validStarterCount)];
-                
+
                 starterCal = 0;
                 for(j = 0; j < recipeList[starterRecomm].ingreCount; j++)
                 {
@@ -1431,17 +1698,20 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
                     
                     for(k = 0; k < foodCount && found == 0; k++)
                     {
-                        if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                        if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
                         {
-                            cal = (recipeList[starterRecomm].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                            cal = (recipeList[starterRecomm].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
                             found = 1;
                         }
                     }
+                    
                     starterCal += cal;
                 }
             }
 
-            validDessertCount = 0;
+            /* FIND VALID DESSERTS */
             for(i = 0; i < recipeCount; i++)
             {
                 totalCal = 0;
@@ -1453,78 +1723,180 @@ Arecommend(nRecipe recipeList[], int recipeCount, nFoodInfo foodList[], int food
                         cal = 0;
                         found = 0;
                         
-                        for (k = 0; k < foodCount && found == 0; k++)
+                        for(k = 0; k < foodCount && found == 0; k++)
                         {
-                            if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
+                            if(strcmp(recipeList[i].ingredientsList[j].FoodItem,
+                                      foodList[k].FoodItem) == 0)
                             {
-                                cal = (recipeList[starterRecomm].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
+                                cal = (recipeList[i].ingredientsList[j].Qty /
+                                       foodList[k].Qty) * foodList[k].Calories;
                                 found = 1;
                             }
                         }
+                        
                         totalCal += cal;
                     }
 
-                    if (mainCal + starterCal + totalCal <= calIntake)
+                    if(mainCal + starterCal + totalCal <= calIntake)
                     {
                         validDessertIdx[validDessertCount] = i;
                         validDessertCount++;
                     }
+                }
+            }
 
-                    if(validDessertCount > 0)
+            if(validDessertCount > 0)
+            {
+                dessertRecomm = validDessertIdx[giveRandomInt(validDessertCount)];
+
+                dessertCal = 0;
+                for(j = 0; j < recipeList[dessertRecomm].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
                     {
-                        dessertRecomm = validDessertIdx[giveRandomInt(validDessertCount)];
-                        
-                        dessertCal = 0;
-                        for(j = 0; j < recipeList[dessertRecomm].ingreCount; j++)
+                        if(strcmp(recipeList[dessertRecomm].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
                         {
-                            cal = 0;
-                            found = 0;
-                            
-                            for(k = 0; k < foodCount && found == 0; k++)
-                            {
-                                if(strcmp(recipeList[dessertRecomm].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
-                                {
-                                    cal =(recipeList[dessertRecomm].ingredientsList[j].Qty /foodList[k].Qty) * foodList[k].Calories;
-                                    found = 1;
-                                }
-                            }
-                            dessertCal += cal;
+                            cal = (recipeList[dessertRecomm].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
+                        }
+                    }
+                    
+                    dessertCal += cal;
+                }
+            }
+
+            printf("\nRECOMMENDED MENU:\n");
+            printf("Target Calories: %d\n", calIntake);
+            printf("Total Menu Calories: %d\n", starterCal + mainCal + dessertCal);
+
+            /* DISPLAY STARTER FIRST */
+            if(starterRecomm != -1)
+            {
+                printf("\n=====================================\n");
+                printf("STARTER\n");
+                printf("%s %d servings %d calories\n",
+                       recipeList[starterRecomm].nDishName,
+                       recipeList[starterRecomm].servingSize,
+                       starterCal);
+
+                printf("\nIngredients:\n");
+                for(j = 0; j < recipeList[starterRecomm].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
+                    {
+                        if(strcmp(recipeList[starterRecomm].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
+                        {
+                            cal = (recipeList[starterRecomm].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
                         }
                     }
 
-                    printf("\nRECOMMENDED MENU:\n");
-                    printf("Total Menu Calories: %d\n", starterCal + mainCal + dessertCal);
+                    printf("%.0lf %s %-15s %d calories\n",
+                           recipeList[starterRecomm].ingredientsList[j].Qty,
+                           recipeList[starterRecomm].ingredientsList[j].UnitofMeas,
+                           recipeList[starterRecomm].ingredientsList[j].FoodItem,
+                           cal);
+                }
 
-                    printf("\n=====================================\n");
-                    printf("MAIN COURSE\n");
-                    printf("%s %d servings %d calories\n", recipeList[num].nDishName, recipeList[num].servingSize, mainCal);
+                printf("\nProcedure:\n");
+                for(j = 0; j < recipeList[starterRecomm].stepCount; j++)
+                {
+                    printf("%d. %s\n", j + 1,
+                           recipeList[starterRecomm].stepsList[j].directions);
+                }
+            }
 
-                    printf("\nIngredients: \n");
-                    for (j = 0; j < recipeList[num].ingreCount; j++)
+            /* DISPLAY MAIN SECOND */
+            if(mainRecomm != -1)
+            {
+                printf("\n=====================================\n");
+                printf("MAIN COURSE\n");
+                printf("%s %d servings %d calories\n",
+                       recipeList[mainRecomm].nDishName,
+                       recipeList[mainRecomm].servingSize,
+                       mainCal);
+
+                printf("\nIngredients:\n");
+                for(j = 0; j < recipeList[mainRecomm].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
                     {
-                        cal = 0;
-                        found = 0;
-                        
-                        for(k = 0; k < foodCount && found == 0; k++)
+                        if(strcmp(recipeList[mainRecomm].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
                         {
-                            if (strcmp(recipeList[num].ingredientsList[j].FoodItem, foodList[k].FoodItem) == 0)
-                            {
-                                cal = (recipeList[num].ingredientsList[j].Qty / foodList[k].Qty) * foodList[k].Calories;
-                                found = 1;
-                            }
+                            cal = (recipeList[mainRecomm].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
                         }
-                        printf("%.0lf %s %-15s %d calories\n",
-                               recipeList[num].ingredientsList[j].Qty,
-                               recipeList[num].ingredientsList[j].UnitofMeas,
-                               recipeList[num].ingredientsList[j].FoodItem,
-                               cal);
                     }
 
-                    printf("\nProcedure:\n");
-                    for (j = 0; j < recipeList[num].stepCount; j++)
+                    printf("%.0lf %s %-15s %d calories\n",
+                           recipeList[mainRecomm].ingredientsList[j].Qty,
+                           recipeList[mainRecomm].ingredientsList[j].UnitofMeas,
+                           recipeList[mainRecomm].ingredientsList[j].FoodItem,
+                           cal);
+                }
+
+                printf("\nProcedure:\n");
+                for(j = 0; j < recipeList[mainRecomm].stepCount; j++)
+                {
+                    printf("%d. %s\n", j + 1,
+                           recipeList[mainRecomm].stepsList[j].directions);
+                }
+            }
+
+            /* DISPLAY DESSERT THIRD */
+            if(dessertRecomm != -1)
+            {
+                printf("\n=====================================\n");
+                printf("DESSERT\n");
+                printf("%s %d servings %d calories\n",
+                       recipeList[dessertRecomm].nDishName,
+                       recipeList[dessertRecomm].servingSize,
+                       dessertCal);
+
+                printf("\nIngredients:\n");
+                for(j = 0; j < recipeList[dessertRecomm].ingreCount; j++)
+                {
+                    cal = 0;
+                    found = 0;
+                    
+                    for(k = 0; k < foodCount && found == 0; k++)
                     {
-                        printf("%d. %s\n", j + 1, recipeList[num].stepsList[j].directions);
+                        if(strcmp(recipeList[dessertRecomm].ingredientsList[j].FoodItem,
+                                  foodList[k].FoodItem) == 0)
+                        {
+                            cal = (recipeList[dessertRecomm].ingredientsList[j].Qty /
+                                   foodList[k].Qty) * foodList[k].Calories;
+                            found = 1;
+                        }
                     }
+
+                    printf("%.0lf %s %-15s %d calories\n",
+                           recipeList[dessertRecomm].ingredientsList[j].Qty,
+                           recipeList[dessertRecomm].ingredientsList[j].UnitofMeas,
+                           recipeList[dessertRecomm].ingredientsList[j].FoodItem,
+                           cal);
+                }
+
+                printf("\nProcedure:\n");
+                for(j = 0; j < recipeList[dessertRecomm].stepCount; j++)
+                {
+                    printf("%d. %s\n", j + 1,
+                           recipeList[dessertRecomm].stepsList[j].directions);
                 }
             }
         }
@@ -2107,13 +2479,14 @@ main(void)
                             case 'E':
                             case 'e':
                             {
-                                char filename[50];
-                                
-                                printf("Enter filename to export: ");
-                                getchar();
-                                readInput(filename, 50);
-                                
-                                exportRecipe(recipeList, recipeCount, filename);
+                            	listRecipe(recipeList, recipeCount);
+                            	char filename[50];
+								printf("Name filename to export: ");
+								
+								getchar();
+								readInput(filename, 50);
+								
+								exportRecipe(recipeList, recipeCount, filename);
                             }
                             break;
                             
@@ -2123,11 +2496,11 @@ main(void)
                             {
                                 char filename[50];
                                 
-                                printf("Enter filename to import: ");
-                                getchar();
-                                readInput(filename, 50);
-                                
-                                importRecipe(recipeList, &recipeCount, filename);
+								printf("Enter filename to import: ");
+								getchar();
+								readInput(filename, 50);
+								
+								importRecipe(recipeList, &recipeCount, filename);
                             }
                             break;
                             
@@ -2162,12 +2535,12 @@ main(void)
                         case '1': //IMPORT RECIPE
                         {
                             char filename[50];
-                            
-                            printf("Enter filename to import: ");
-                            getchar();
-                            readInput(filename, 50);
-                            
-                            importRecipe(recipeList, &recipeCount, filename);
+                                
+							printf("Enter filename to import: ");
+							getchar();
+							readInput(filename, 50);
+								
+							importRecipe(recipeList, &recipeCount, filename);
                         }
                         break;
                         
@@ -2199,29 +2572,23 @@ main(void)
                         break;
                         
                         case '4': //GENERATE SHOPPING LIST
-                        {
-                            int servings;
-                            
-                            printf("Enter Serving Size: ");
-                            scanf("%d", &servings);
-                            
-                            AgenList(recipeList, recipeCount, servings);
-                        }
-                        break;
+					    	AgenList(recipeList, recipeCount);
+						    break;
                         
                         case '5': //SCAN RECIPE BY INGREDIENT
                         {
                             char ingredient[21];
                             
                             printf("Enter Ingredient Name: ");
-                            scanf(" %20[^\n]", ingredient);
+                            getchar();
+                            readInput(ingredient, 21);
                             
-                            AscanRecIngre(recipeList, recipeCount, ingredient);
+                            AscanRecIngre(recipeList, recipeCount, ingredient, foodList, foodCount);
                         }
                         break;
                         
                         case '6': //RECOMMEND MENU
-                            srand((unsigned int)time(NULL));
+                            //srand((unsignd int)time(NULL));
                             Arecommend(recipeList, recipeCount, foodList, foodCount);
                             break;
                         
