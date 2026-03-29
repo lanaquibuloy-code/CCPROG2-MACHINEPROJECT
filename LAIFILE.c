@@ -21,6 +21,7 @@
 
 // LIMITS FOR RECIPES
 #define MAX_RECIPES              50
+#define MAX_FOOD_ITEMS           50
 #define MAX_INGREDIENTS          20
 #define MAX_STEPS                15
 
@@ -2096,6 +2097,18 @@ AlistviewRecipee(nRecipe recipeList[],
 }
 
 //LANA 
+
+/*
+ ratingIndex searches for a dish in the rating list
+ 
+ @param ratingList - array of nRating containing rating records
+ @param ratingCount - number of ratings stored
+ @param dishName - name of the dish to search
+ 
+ @return index of the dish if found, otherwise -1
+ 
+ Pre-condition: ratingList contains valid data
+*/
 int ratingIndex (nRating ratingList[], int ratingCount, char dishName[])
 {
 	int i;
@@ -2110,6 +2123,16 @@ int ratingIndex (nRating ratingList[], int ratingCount, char dishName[])
 	}
 	return idx;
 }
+
+/*
+ getAvgRating computes the average rating of a dish
+ 
+ @param rating - nRating structure containing total rating and count
+ 
+ @return average rating (double)
+ 
+ Pre-condition: rating contains valid rating data
+*/
 
 double getAvgRating(nRating rating)
 {
@@ -2127,6 +2150,17 @@ double getAvgRating(nRating rating)
 	return avg;
 }
 
+/*
+ rateRecipe allows the user to rate a selected recipe
+ 
+ @param recipeList - array of recipes
+ @param recipeCount - number of recipes
+ @param ratingList - array storing rating data
+ @param ratingCount - pointer to number of ratings
+ 
+ Pre-condition: recipeList contains at least one recipe
+ Post-condition: rating is added or updated in ratingList
+*/
 void 
 rateRecipe(nRecipe recipeList[], int recipeCount, nRating ratingList[], int *ratingCount)
 {
@@ -2187,6 +2221,15 @@ rateRecipe(nRecipe recipeList[], int recipeCount, nRating ratingList[], int *rat
 	}
 }
 
+/*
+ viewRatings displays all recipes with their average rating and count
+ 
+ @param ratingList - array of ratings
+ @param ratingCount - number of ratings stored
+ 
+ Pre-condition: ratingList contains valid data
+*/
+
 void 
 viewRatings(nRating ratingList[], int ratingCount)
 {
@@ -2199,23 +2242,32 @@ viewRatings(nRating ratingList[], int ratingCount)
 	}
 	else 
 	{
-		//FIX IT 
-		printf("\n=============================================\n");
+		printf("\n=====================================================\n");
 		printf("| %-20s | %-10s | %-10s |\n", "Dish", "Average", "Count");
-		printf("=============================================\n");
+		printf("=====================================================\n");
 		
 		for(i = 0; i < ratingCount; i++)
 		{
 			avg = getAvgRating(ratingList[i]);
 			
 			printf("| %-20s | %-10.2lf | %-10d |\n", 
-			ratingList[i].dishName,
-			avg,
-			ratingList[i].ratingCount);
+				   ratingList[i].dishName,
+				   avg,
+				   ratingList[i].ratingCount);
 		}
-		printf("=========================================\n");
+		
+		printf("=====================================================\n");
 	}
 }
+
+/*
+ topRated finds and displays the dish with the highest average rating
+ 
+ @param ratingList - array of ratings
+ @param ratingCount - number of ratings
+ 
+ Pre-condition: ratingList contains valid data
+*/
 
 void topRated(nRating ratingList[], int ratingCount)
 {
